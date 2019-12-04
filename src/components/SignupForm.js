@@ -89,19 +89,19 @@ class SignupForm extends React.Component{
         return (
             <div>
                 <form>
-                    <label for='email'>Email: </label>
+                    <label htmlFor='email'>Email: </label>
                     <input name='email' id='email' type='text' onChange={e => this.updateEmail(e.target.value)}/>
                     {this.state.email.touched && (<span className='validationError'>{this.validateEmail()}</span>)}
                     <br/>
-                    <label for='username'>Username: </label>
+                    <label htmlFor='username'>Username: </label>
                     <input name='username' id='username' type='text' onChange={e => this.updateUsername(e.target.value)}/>
                     {this.state.username.touched && (<span className='validationError'>{this.validateUsername()}</span>)}
                     <br/>
-                    <label for='password'>Password: </label>
+                    <label htmlFor='password'>Password: </label>
                     <input name='password' id='password' type='password' onChange={e => this.updatePassword(e.target.value)}/>
                     {this.state.password.touched && (<span className='validationError'>{this.validatePassword()}</span>)}
                     <br/>
-                    <label for='repeatPassword'>Repeat Password: </label>
+                    <label htmlFor='repeatPassword'>Repeat Password: </label>
                     <input name='repeatPassword' id='repeatPassword' type='password' onChange={e => this.updateRepeatPassword(e.target.value)}/>
                     {this.state.repeatPassword.touched && (<span className='validationError'>{this.validateRepeatPassword()}</span>)}
                     <br/>

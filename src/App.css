@@ -79,3 +79,9 @@ button.selected{
     top: 100px;
     left: 20px;
 }
+
+.info-pane{
+    position: absolute;
+    height: 300px;
+    width: 400px;
+}

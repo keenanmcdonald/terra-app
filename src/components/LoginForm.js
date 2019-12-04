@@ -30,10 +30,10 @@ class LoginForm extends React.Component{
         return (
             <div>
                 <form>
-                    <label for='email'>Email: </label>
+                    <label htmlFor='email'>Email: </label>
                     <input name='email' id='email' type='text' onChange={e => this.updateEmail(e.target.value)}/>
                     <br/>
-                    <label for='password'>Password: </label>
+                    <label htmlFor='password'>Password: </label>
                     <input name='password' id='password' type='password' onChange={e => this.updatePassword(e.target.value)}/>
                     <br/>
                     <button id='submit' type='submit' 
