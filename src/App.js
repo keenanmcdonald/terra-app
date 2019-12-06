@@ -8,7 +8,6 @@ import { hot } from 'react-hot-loader/root'
 import TerraContext from './TerraContext'
 import uuidv4 from 'uuid/v4'
 import './App.css'
-import { thisExpression } from '@babel/types'
 
 class App extends React.Component{
   constructor(props){
@@ -27,8 +26,8 @@ class App extends React.Component{
     this.saveSelected = this.saveSelected.bind(this)
     this.selectEntity = this.selectEntity.bind(this)
     this.dropRouteJoint = this.dropRouteJoint.bind(this)
-    this.highlightEntity = this.highlightEntity.bind(this)
-    this.removeHighlights = this.removeHighlights.bind(this)
+    this.editSelected = this.editSelected.bind(this)
+    this.deleteSelected = this.deleteSelected.bind(this)
   }
 
   switchEditMode(mode) {
@@ -36,14 +35,14 @@ class App extends React.Component{
   }
 
   dropMarker(position) {
-    const waypoint = {saved: false, position: position, id: uuidv4(), type: 'waypoint', hover: true}
+    const waypoint = {editing: true, position: position, id: uuidv4(), type: 'waypoint'}
     this.setState({selected: waypoint})
   }
 
   dropRouteJoint(position){
     if (!this.state.selected){
       console.log('newroute')
-      let newRoute = {saved: false, positions: [position], id: uuidv4(), type: 'route', hover: true}
+      let newRoute = {editing: true, positions: [position], id: uuidv4(), type: 'route'}
       this.setState({selected: newRoute})
     }
     else{
@@ -67,9 +66,49 @@ class App extends React.Component{
 
   }
 
+  editSelected(){
+    this.setState({selected: {...this.state.selected, editing: true}})
+  }
+
+  deleteSelected(){
+    console.log('deleteSelected')
+    if (this.state.selected.type === 'waypoint'){
+      console.log('delete waypoint')
+
+      let waypoints = this.state.waypoints
+      let index = -1
+      for (let i = 0; i < waypoints.length; i++){
+        if (waypoints[i].id === this.state.selected.id){
+          console.log(waypoints[i].id)
+          console.log(this.state.selected.id)
+          index = i
+        }
+      }
+      if (index > -1) {
+        waypoints.splice(index,1)
+      }
+      this.setState({selected: null, waypoints})
+    }
+    else if (this.state.selected.type === 'route'){
+      console.log('delete route')
+
+      let routes = this.state.routes
+      let index = -1
+      for (let i = 0; i < routes.length; i++){
+        if (routes[i].id === this.state.selected.id){
+          index = i
+        }
+      }      
+      if(index > -1){
+        routes.splice(index, 1)
+      }
+      this.setState({selected: null, routes})
+    }
+  }
+
   saveSelected(event, name, description){
     event.preventDefault()
-    const selected = { ...this.state.selected, saved: true, name, description}
+    const selected = { ...this.state.selected, editing: false, name, description}
     if (selected.type === 'waypoint'){
       let waypoints = this.state.waypoints
       waypoints.push(selected)
@@ -80,32 +119,6 @@ class App extends React.Component{
       routes.push(selected)
       this.setState({routes: routes, selected: null})
     }
-  }
-
-  highlightEntity(id){
-    let entity;
-    entity = this.state.waypoints.find(waypoint => {
-      return waypoint.id === id
-    })
-    if(!entity){
-      entity = this.state.routes.find(route => {
-        return route.id === id
-      })
-    }
-    if (entity){
-      entity.hover = true;
-    }
-  }
-  removeHighlights(){
-    let waypoints = this.state.waypoints
-    let routes = this.state.routes
-    for (let i = 0; i < waypoints.length; i++){
-      waypoints[i].hover = false
-    }
-    for (let i = 0; i < routes.length; i++){
-      routes[i].hover = false
-    }
-    this.setState({...this.state, routes: routes, waypoints: waypoints})
   }
 
   cancelAddEntity(e){
@@ -123,8 +136,8 @@ class App extends React.Component{
         saveSelected: this.saveSelected,
         selectEntity: this.selectEntity,
         dropRouteJoint: this.dropRouteJoint,
-        highlightEntity: this.highlightEntity,
-        removeHighlights: this.removeHighlights,
+        editSelected: this.editSelected,
+        deleteSelected: this.deleteSelected,
       }
     }
     return (

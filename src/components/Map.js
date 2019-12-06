@@ -31,16 +31,13 @@ class Map extends React.Component {
     }
     drawWaypoints(){
         return this.context.waypoints.map((waypoint, index) => {
-            console.log(waypoint.name)
-            const pixelSize = waypoint.hover ? 16 : 14
-            console.log(pixelSize)
             return (
                 <Entity 
                     key={waypoint.id}
                     id={waypoint.id}
                     position={waypoint.position}
                     point={{
-                        pixelSize,
+                        pixelSize: 14,
                         color: Color.CORNFLOWERBLUE,
                     }}
                 />
@@ -49,14 +46,13 @@ class Map extends React.Component {
     }
     drawRoutes(){
         return this.context.routes.map((route, index) => {
-            const width = route.hover ? 5 : 4
             return <Entity
                 key={route.id}
                 id={route.id}
                 position={route.positions[0]}
                 polyline={new PolylineGraphics({
                     positions: route.positions,
-                    width,
+                    width: 4.0,
                     clampToGround: true,
                     material: Color.CORNFLOWERBLUE,
                 })}
@@ -71,7 +67,7 @@ class Map extends React.Component {
                     <Entity 
                         key={this.context.selected.id} 
                         position={this.context.selected.position}
-                        point={{pixelSize: 14}}
+                        point={{pixelSize: 16}}
                     />
                 )
             }
@@ -81,7 +77,7 @@ class Map extends React.Component {
                         position={this.context.selected.positions[0]} //is this necessary?
                         polyline={new PolylineGraphics({
                             positions: this.context.selected.positions,
-                            width: 3.0,
+                            width: 5.0,
                             clampToGround: true,
                         })}/>
                 )
@@ -136,10 +132,10 @@ class Map extends React.Component {
         const mousePosition = event.endPosition
         const pickedObject = this.viewer.scene.pick(mousePosition)
         if (pickedObject){
-            this.context.methods.highlightEntity(pickedObject.id.id)
+            document.body.style.cursor = 'pointer';
         }
         else{
-            this.context.methods.removeHighlights()
+            document.body.style.cursor = 'default';
         }
     }
     render() {

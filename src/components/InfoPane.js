@@ -8,13 +8,7 @@ class InfoPane extends React.Component{
 
     render(){
         const selected = this.context.selected
-        let content;
-        if (selected.saved){
-            content = <EntityInfo name={selected.name} description={selected.description}/>
-        }
-        else {
-            content = <AddEntityForm/>
-        }
+        const content = selected.editing ? <AddEntityForm/> : <EntityInfo name={selected.name} description={selected.description}/>
         
         return(
             <div className='info-pane'>
