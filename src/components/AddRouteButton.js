@@ -5,7 +5,6 @@ class AddRouteButton extends React.Component{
     static contextType = TerraContext
 
     handleClick(){
-        console.log('add waypoint clicked')
         this.context.methods.switchEditMode('route')
     }
 
