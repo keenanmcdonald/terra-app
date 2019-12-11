@@ -18,14 +18,21 @@ import Display from './Display'
 Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5ZWI5Mzc5NS1iZjNmLTQ0OTEtYTNjOS0xYWY1MTBmNGE0YjAiLCJpZCI6MTg4MzcsInNjb3BlcyI6WyJhc2wiLCJhc3IiLCJhc3ciLCJnYyJdLCJpYXQiOjE1NzQ4MTM3MDJ9.q8-BHVsogGtuJUBMi5K8V-h9frZOQWsZGJwf-CuyDCY'
 
 const terrainProvider = createWorldTerrain();
-//const grandTetonCoordinates = new Cartesian3(-1640873.683562967, -4320866.876996664, 4393353.31858848)
+const GRAND_TETON = {
+    destination: new Cartesian3(-1631671.044420763, -4323646.892947312, 4389361.1347925365),
+    orientation: {direction: new Cartesian3(-0.7298340716352859, 0.680904387616289, -0.060921611971013895), up: new Cartesian3(-0.5138818030145764, -0.4876629521263775, 0.7057693232592888)},
+    duration: 0,
+}
 
 class Map extends React.Component {
     static contextType = TerraContext
+    
+    componentDidMount(){
+        this.viewer.camera.flyTo(GRAND_TETON)
+    }
 
     drawEntities(){
         return this.context.entities.map((entity, index) => {
-            console.log('redraw')
             const isSelected = this.context.selected === index
             const pixelSize = isSelected ? 16 : 14
             const width = isSelected ? 6 : 4
@@ -69,15 +76,11 @@ class Map extends React.Component {
     }
 
     logCameraPosition(){
-        const {viewer} = this;
-
-        console.log(`position: `)
-        console.log(viewer.camera.position)
-        console.log(`direction: `)
-        console.log(viewer.camera.direction)
+        console.log(this.viewer.camera)
     }
 
     handleClick(event) {
+        this.logCameraPosition()
         const mousePosition = event.position
         const pickedObject = this.viewer.scene.pick(mousePosition)
         if (pickedObject){

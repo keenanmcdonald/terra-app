@@ -1,5 +1,5 @@
 import React from 'react';
-import AccountDropdown from './AccountDropdown'
+import AccountNav from './AccountNav'
 import {withRouter} from 'react-router-dom'
 
 
@@ -12,7 +12,7 @@ class Header extends React.Component{
                     <h1>Terra</h1>
                 </div>
                 <div className="account-dropdown-container">
-                    <AccountDropdown/>
+                    <AccountNav/>
                 </div>
             </header>
         )

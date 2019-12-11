@@ -29,7 +29,7 @@ class LoginForm extends React.Component{
     render(){
         return (
             <div>
-                <form>
+                <form className='login-form'>
                     <label htmlFor='email'>Email: </label>
                     <input name='email' id='email' type='text' onChange={e => this.updateEmail(e.target.value)}/>
                     <br/>

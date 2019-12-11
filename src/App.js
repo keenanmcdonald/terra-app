@@ -9,9 +9,11 @@ import TerraContext from './TerraContext'
 import uuidv4 from 'uuid/v4'
 import './App.css'
 
+/*
 const TOOL_NONE = 0
 const TOOL_ADDWAYPOINT = 1
 const TOOL_ADDROUTE = 2
+*/
 
 class App extends React.Component{
   constructor(props){

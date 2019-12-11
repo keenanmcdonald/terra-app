@@ -25,13 +25,7 @@ class EditEntityForm extends React.Component{
         this.context.methods.cancelEdit()
         this.props.requestRender()
     }
-    validateName(){
-        const name = this.state.name
-        
-
-    }
     render(){
-        console.log(this.validateName())
         return (
             <form className='edit-entity-form'>
                 <div>

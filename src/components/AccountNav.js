@@ -1,7 +1,7 @@
 import React from 'react';
 import {withRouter} from 'react-router-dom'
 
-class AccountDropdown extends React.Component{
+class AccountNav extends React.Component{
     constructor() {
         super();
 
@@ -30,21 +30,12 @@ class AccountDropdown extends React.Component{
 
     render(){
         return (
-            <div className="dropdown">
-                <button onClick={this.openMenu}>Account</button>
-                {
-                    this.state.showMenu 
-                    ? (
-                        <div className="menu">
-                            <button onClick={() => this.props.history.push('/login')}>Login</button>
-                            <button onClick={() => this.props.history.push('/signup')}>Signup</button>
-                        </div>
-                    ) 
-                    : null
-                }
+            <div className="account-nav">
+                <button onClick={() => this.props.history.push('/login')}>Login</button>
+                <button onClick={() => this.props.history.push('/signup')}>Signup</button>
             </div>
         )
     }
 }
 
-export default withRouter(AccountDropdown)
+export default withRouter(AccountNav)

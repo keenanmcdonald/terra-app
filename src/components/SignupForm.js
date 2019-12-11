@@ -88,7 +88,7 @@ class SignupForm extends React.Component{
     render(){
         return (
             <div>
-                <form>
+                <form className='signup-form'>
                     <label htmlFor='email'>Email: </label>
                     <input name='email' id='email' type='text' onChange={e => this.updateEmail(e.target.value)}/>
                     {this.state.email.touched && (<span className='validation-error'>{this.validateEmail()}</span>)}
