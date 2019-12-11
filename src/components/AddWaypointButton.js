@@ -5,13 +5,12 @@ class AddWaypointButton extends React.Component{
     static contextType = TerraContext
 
     handleClick(){
-        console.log('add waypoint clicked')
-        this.context.methods.switchEditMode('point')
+        this.context.methods.setTool('add point')
     }
 
     render(){
         return(
-            <button className={(this.context.editMode === 'point') ? 'selected' : ''} onClick={() => this.handleClick()}>Add Waypoint</button>
+            <button className={(this.context.toolbar.selectedTool === 'add point') ? 'selected' : ''} onClick={() => this.handleClick()}>Add Waypoint</button>
         )
     }
 }

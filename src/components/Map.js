@@ -1,9 +1,9 @@
 import React from "react"
 import { Globe, Viewer, Entity, ScreenSpaceEventHandler, ScreenSpaceEvent } from 'resium'
 import { 
+            PolylineOutlineMaterialProperty,
             PolylineGraphics,
             Color,
-            Math as cesiumMath,
             Ion, 
             Cartesian3, 
             createWorldTerrain, 
@@ -13,7 +13,7 @@ import {
         } from 'cesium'
 import TerraContext from '../TerraContext'
 import Toolbar from './Toolbar'
-import InfoPane from './InfoPane'
+import Display from './Display'
 
 Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5ZWI5Mzc5NS1iZjNmLTQ0OTEtYTNjOS0xYWY1MTBmNGE0YjAiLCJpZCI6MTg4MzcsInNjb3BlcyI6WyJhc2wiLCJhc3IiLCJhc3ciLCJnYyJdLCJpYXQiOjE1NzQ4MTM3MDJ9.q8-BHVsogGtuJUBMi5K8V-h9frZOQWsZGJwf-CuyDCY'
 
@@ -22,74 +22,52 @@ const terrainProvider = createWorldTerrain();
 
 class Map extends React.Component {
     static contextType = TerraContext
-    constructor(props){
-        super(props)
 
-        this.state = {
-            mousePosition: null
-        }
-    }
-    drawWaypoints(){
-        return this.context.waypoints.map((waypoint, index) => {
-            return (
-                <Entity 
-                    key={waypoint.id}
-                    id={waypoint.id}
-                    position={waypoint.position}
-                    point={{
-                        pixelSize: 14,
-                        color: Color.CORNFLOWERBLUE,
-                    }}
-                />
-            )
-        }) 
-    }
-    drawRoutes(){
-        return this.context.routes.map((route, index) => {
-            return <Entity
-                key={route.id}
-                id={route.id}
-                position={route.positions[0]}
-                polyline={new PolylineGraphics({
-                    positions: route.positions,
-                    width: 4.0,
-                    clampToGround: true,
-                    material: Color.CORNFLOWERBLUE,
-                })}
-            />
-        })
-    }
-    drawSelected(){
-        let selected = '';
-        if (this.context.selected){
-            if (this.context.selected.type === 'waypoint'){
-                selected = (
+    drawEntities(){
+        return this.context.entities.map((entity, index) => {
+            console.log('redraw')
+            const isSelected = this.context.selected === index
+            const pixelSize = isSelected ? 16 : 14
+            const width = isSelected ? 6 : 4
+            const outlineWidth = isSelected ? 2 : 0
+            if (entity.type === 'waypoint'){
+                return (
                     <Entity 
-                        key={this.context.selected.id} 
-                        position={this.context.selected.position}
-                        point={{pixelSize: 16}}
+                        key={entity.id}
+                        id={entity.id}
+                        position={entity.position}
+                        point={{
+                            pixelSize,
+                            color: Color.CORNFLOWERBLUE,
+                            outlineColor: Color.WHITE,
+                            outlineWidth,
+                            disableDepthTestDistance: Number.POSITIVE_INFINITY
+                        }}
                     />
                 )
             }
-            else if (this.context.selected.type === 'route'){
-                selected = (
+            else {
+                return (
                     <Entity
-                        position={this.context.selected.positions[0]} //is this necessary?
+                        key={entity.id}
+                        id={entity.id}
+                        position={entity.position[0]}
                         polyline={new PolylineGraphics({
-                            positions: this.context.selected.positions,
-                            width: 5.0,
+                            positions: entity.position,
+                            width,
                             clampToGround: true,
-                        })}/>
+                            material: new PolylineOutlineMaterialProperty({
+                                color: Color.CORNFLOWERBLUE,
+                                outlineColor: Color.WHITE,
+                                outlineWidth: outlineWidth
+                            }),
+                        })}
+                    />
                 )
             }
-        }
-        return selected
+        }) 
     }
-    logPosition(cartographic){
-        let longitude = cesiumMath.toDegrees(cartographic.longitude).toFixed(2);
-        let latitude = cesiumMath.toDegrees(cartographic.latitude).toFixed(2)
-        console.log(`lat: ${latitude}, lng: ${longitude}`)
-    }
+
     logCameraPosition(){
         const {viewer} = this;
 
@@ -98,24 +76,26 @@ class Map extends React.Component {
         console.log(`direction: `)
         console.log(viewer.camera.direction)
     }
+
     handleClick(event) {
         const mousePosition = event.position
         const pickedObject = this.viewer.scene.pick(mousePosition)
         if (pickedObject){
-            console.log(pickedObject)
             this.context.methods.selectEntity(pickedObject.id.id)
+            this.viewer.scene.requestRender()
         }
-        else if (this.context.editMode === 'point'){
+        else if (this.context.toolbar.selectedTool === 'add point'){
             this.getClickPosition(mousePosition, this.viewer.scene)
                 .then(position => {
-                    this.context.methods.dropMarker(position)
+                    this.context.methods.dropWaypoint(position)
                 })
                 .catch(error => console.log(error))
         }
-        else if (this.context.editMode === 'route'){
+        else if (this.context.toolbar.selectedTool === 'add route'){
             this.getClickPosition(mousePosition, this.viewer.scene)
                 .then(position => {
                     this.context.methods.dropRouteJoint(position)
+                    this.context.methods.setDisplay('edit')
                 })
                 .catch(error => console.log(error))
         }
@@ -131,6 +111,8 @@ class Map extends React.Component {
     handleHover(event){
         const mousePosition = event.endPosition
         const pickedObject = this.viewer.scene.pick(mousePosition)
+
+        //change cursor when hovering
         if (pickedObject){
             document.body.style.cursor = 'pointer';
         }
@@ -138,17 +120,15 @@ class Map extends React.Component {
             document.body.style.cursor = 'default';
         }
     }
+    requestRender(){
+        this.viewer.scene.requestRender()
+    }
     render() {
-        const waypoints = this.drawWaypoints();
-        const routes = this.drawRoutes();
-        const selected = this.drawSelected();
+        const entities = this.drawEntities();
+        const display = this.context.display ? <Display requestRender={() => this.requestRender()}/> : ''
 
-        let infoPane;
-        if (this.context.selected){
-            infoPane = <InfoPane/>
-        }
         return (
-            <div>
+            <div className='map-container'>
                 <Viewer 
                     ref={e => {
                         this.viewer = e ? e.cesiumElement : null;
@@ -164,35 +144,21 @@ class Map extends React.Component {
                     selectionIndicator={false}
                     terrainProvider={terrainProvider}
                     requestRenderMode={true}
+                    maximumRenderTimeChange= {Infinity}
                     scene3DOnly={true}>
                     <Globe depthTestAgainstTerrain={true}>
                         <Toolbar/>
-                            {waypoints}
-                            {routes}
-                            {selected}
+                        {entities}
+                        {display}
                         <ScreenSpaceEventHandler>
                             <ScreenSpaceEvent action={e => this.handleClick(e)} type={ScreenSpaceEventType.LEFT_CLICK} />
                             <ScreenSpaceEvent action={e => this.handleHover(e)} type={ScreenSpaceEventType.MOUSE_MOVE}/>
                         </ScreenSpaceEventHandler>
                     </Globe>
                 </Viewer>
-                {infoPane}
             </div>
         );
     }
 }
 
 export default Map
-
-/*
-
-    handleHover(e){
-        console.log('handle hover')
-        const {viewer} = this;
-        let pickedObject = viewer.scene.pick(e.endPosition)
-        if(pickedObject){
-            console.log(pickedObject)
-        }
-    }
-
-*/

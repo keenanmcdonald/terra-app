@@ -91,27 +91,34 @@ class SignupForm extends React.Component{
                 <form>
                     <label htmlFor='email'>Email: </label>
                     <input name='email' id='email' type='text' onChange={e => this.updateEmail(e.target.value)}/>
-                    {this.state.email.touched && (<span className='validationError'>{this.validateEmail()}</span>)}
+                    {this.state.email.touched && (<span className='validation-error'>{this.validateEmail()}</span>)}
                     <br/>
                     <label htmlFor='username'>Username: </label>
                     <input name='username' id='username' type='text' onChange={e => this.updateUsername(e.target.value)}/>
-                    {this.state.username.touched && (<span className='validationError'>{this.validateUsername()}</span>)}
+                    {this.state.username.touched && (<span className='validation-error'>{this.validateUsername()}</span>)}
                     <br/>
                     <label htmlFor='password'>Password: </label>
                     <input name='password' id='password' type='password' onChange={e => this.updatePassword(e.target.value)}/>
-                    {this.state.password.touched && (<span className='validationError'>{this.validatePassword()}</span>)}
+                    {this.state.password.touched && (<span className='validation-error'>{this.validatePassword()}</span>)}
                     <br/>
                     <label htmlFor='repeatPassword'>Repeat Password: </label>
                     <input name='repeatPassword' id='repeatPassword' type='password' onChange={e => this.updateRepeatPassword(e.target.value)}/>
-                    {this.state.repeatPassword.touched && (<span className='validationError'>{this.validateRepeatPassword()}</span>)}
+                    {this.state.repeatPassword.touched && (<span className='validation-error'>{this.validateRepeatPassword()}</span>)}
                     <br/>
                     <button id='submit' type='submit' 
+                        className={
+                            (this.validateEmail() || 
+                            this.validateUsername() ||
+                            this.validatePassword() ||
+                            this.validateRepeatPassword())
+                            && 'disabled'
+                        }
                         onClick={e => this.submitForm(e)} 
                         disabled={
-                            this.validateEmail || 
-                            this.validateUsername ||
-                            this.validatePassword ||
-                            this.validateRepeatPassword
+                            this.validateEmail() || 
+                            this.validateUsername() ||
+                            this.validatePassword() ||
+                            this.validateRepeatPassword()
                         }
                     >
                         Sign up

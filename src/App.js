@@ -9,141 +9,134 @@ import TerraContext from './TerraContext'
 import uuidv4 from 'uuid/v4'
 import './App.css'
 
+const TOOL_NONE = 0
+const TOOL_ADDWAYPOINT = 1
+const TOOL_ADDROUTE = 2
+
 class App extends React.Component{
   constructor(props){
     super(props)
 
     this.state={
-      waypoints:[],
-      routes: [],
-      selected: null,
-      editMode: '',
+      entities:[],
+      selected: -1,
+      toolbar: {selectedTool: ''},
+      display: '',
     }
 
-    this.switchEditMode = this.switchEditMode.bind(this)
-    this.dropMarker = this.dropMarker.bind(this)
-    this.cancelAddEntity = this.cancelAddEntity.bind(this)
-    this.saveSelected = this.saveSelected.bind(this)
-    this.selectEntity = this.selectEntity.bind(this)
+    this.setTool = this.setTool.bind(this)
+    this.setDisplay = this.setDisplay.bind(this)
+    this.addEntity = this.addEntity.bind(this)
+    this.updateSelected = this.updateSelected.bind(this)
+    this.dropWaypoint = this.dropWaypoint.bind(this)
     this.dropRouteJoint = this.dropRouteJoint.bind(this)
-    this.editSelected = this.editSelected.bind(this)
+    this.selectEntity = this.selectEntity.bind(this)
     this.deleteSelected = this.deleteSelected.bind(this)
+    this.saveSelected = this.saveSelected.bind(this)
+    this.cancelEdit = this.cancelEdit.bind(this)
   }
 
-  switchEditMode(mode) {
-    this.setState({editMode: mode})
+  setTool(tool) {
+    this.setState({toolbar: {...this.state.toolbar, selectedTool: tool}})
+  }
+  setDisplay(mode){
+    this.setState({display: mode})
+  }
+  
+  addEntity(entity){
+    let entities = this.state.entities
+    const index = entities.length
+    entities.push(entity)
+    this.setState({entities: entities, selected: index})
+  }
+  updateSelected(entity){
+    this.deleteSelected()
+    this.addEntity(entity)
   }
 
-  dropMarker(position) {
-    const waypoint = {editing: true, position: position, id: uuidv4(), type: 'waypoint'}
-    this.setState({selected: waypoint})
+  dropWaypoint(position) {
+    if (this.state.display === 'edit'){
+      let waypoint = this.state.entities[this.state.selected]
+      waypoint.position = position
+      this.updateSelected(waypoint)
+    }
+    else{
+      const waypoint = {position: position, id: uuidv4(), name: '', description: '', type: 'waypoint'}
+      this.addEntity(waypoint)
+      this.setDisplay('edit')
+    }
   }
 
   dropRouteJoint(position){
-    if (!this.state.selected){
-      console.log('newroute')
-      let newRoute = {editing: true, positions: [position], id: uuidv4(), type: 'route'}
-      this.setState({selected: newRoute})
+    let route = this.state.entities[this.state.selected]
+    console.log(this.state.display === 'edit')
+    if (!route){
+      let newRoute = {position: [position], id: uuidv4(), name: '', description: '', type: 'route'}
+      console.log(newRoute)
+      this.addEntity(newRoute)
+    }
+    else if (this.state.display === 'edit'){
+      route.position.push(position)
+      this.updateSelected(route)
     }
     else{
-      let positions = this.state.selected.positions
-      positions.push(position)
-      this.setState({selected: {...this.state.selected, positions: positions}})
+      this.setState({selected: -1, display: ''})
     }
   }
 
   selectEntity(id) {
-    let selected = this.state.selected
-    selected = this.state.waypoints.find(waypoint => {
-      return waypoint.id === id
-    })
-    if(!selected){
-      selected = this.state.routes.find(route => {
-        return route.id === id
-      })
+    const length = this.state.entities.length
+    for (let i=0; i < length; i++){
+      if (id === this.state.entities[i].id){
+        this.setState({selected: i})
+      }
     }
-    this.setState({selected: selected})
-
+    this.setDisplay('info')
   }
 
-  editSelected(){
-    this.setState({selected: {...this.state.selected, editing: true}})
+  saveSelected(e, name, description){
+    e.preventDefault()
+    let entity = this.state.entities[this.state.selected]
+    entity.name = name
+    entity.description = description
+    this.updateSelected(entity)
+    this.setDisplay('info')
   }
 
   deleteSelected(){
-    console.log('deleteSelected')
-    if (this.state.selected.type === 'waypoint'){
-      console.log('delete waypoint')
-
-      let waypoints = this.state.waypoints
-      let index = -1
-      for (let i = 0; i < waypoints.length; i++){
-        if (waypoints[i].id === this.state.selected.id){
-          console.log(waypoints[i].id)
-          console.log(this.state.selected.id)
-          index = i
-        }
-      }
-      if (index > -1) {
-        waypoints.splice(index,1)
-      }
-      this.setState({selected: null, waypoints})
-    }
-    else if (this.state.selected.type === 'route'){
-      console.log('delete route')
-
-      let routes = this.state.routes
-      let index = -1
-      for (let i = 0; i < routes.length; i++){
-        if (routes[i].id === this.state.selected.id){
-          index = i
-        }
-      }      
-      if(index > -1){
-        routes.splice(index, 1)
-      }
-      this.setState({selected: null, routes})
-    }
+    let entities = this.state.entities
+    entities.splice(this.state.selected, 1)
+    this.setState({entities})
   }
 
-  saveSelected(event, name, description){
-    event.preventDefault()
-    const selected = { ...this.state.selected, editing: false, name, description}
-    if (selected.type === 'waypoint'){
-      let waypoints = this.state.waypoints
-      waypoints.push(selected)
-      this.setState({waypoints: waypoints, selected: null})
+  cancelEdit(){
+    if (!this.state.entities[this.state.selected].name){
+      this.deleteSelected()
     }
-    else if (selected.type === 'route'){
-      let routes = this.state.routes
-      routes.push(selected)
-      this.setState({routes: routes, selected: null})
+    else{
+      this.setDisplay('info')
     }
-  }
-
-  cancelAddEntity(e){
-    e.preventDefault()
-    this.setState({selected: null})
   }
 
   render(){
     const contextValue = {
       ...this.state, 
       methods: {
-        switchEditMode: this.switchEditMode,
-        dropMarker: this.dropMarker,
-        cancelAddEntity: this.cancelAddEntity,
-        saveSelected: this.saveSelected,
+        setTool: this.setTool,
+        setDisplay: this.setDisplay,
+        dropWaypoint: this.dropWaypoint,
+        addEntity: this.addEntity,
         selectEntity: this.selectEntity,
         dropRouteJoint: this.dropRouteJoint,
-        editSelected: this.editSelected,
         deleteSelected: this.deleteSelected,
+        saveSelected: this.saveSelected,
+        cancelEdit: this.cancelEdit,
       }
     }
     return (
       <div className="App">
         <TerraContext.Provider value={contextValue}>
-          <Header /> 
+        <Header />
           <main>
             <Route exact path='/' component={Map}/>
             <Route path='/login' component={LoginForm}/>
