@@ -15,7 +15,7 @@ import TerraContext from '../TerraContext'
 import Toolbar from './Toolbar'
 import Display from './Display'
 
-Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5ZWI5Mzc5NS1iZjNmLTQ0OTEtYTNjOS0xYWY1MTBmNGE0YjAiLCJpZCI6MTg4MzcsInNjb3BlcyI6WyJhc2wiLCJhc3IiLCJhc3ciLCJnYyJdLCJpYXQiOjE1NzQ4MTM3MDJ9.q8-BHVsogGtuJUBMi5K8V-h9frZOQWsZGJwf-CuyDCY'
+Ion.defaultAccessToken = process.env.CESIUM_ACCESS_KEY
 
 const terrainProvider = createWorldTerrain();
 const GRAND_TETON = {

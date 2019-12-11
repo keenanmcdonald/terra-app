@@ -101,7 +101,7 @@ button.disabled:hover{
 }
 .toolbar{
     position: absolute;
-    top: 100px;
+    top: 62px;
     left: 20px;
 }
 .display{
@@ -127,12 +127,23 @@ button.disabled:hover{
     border: solid rgba(255, 255, 255, .8) 1px;
     border-radius: 5px;
 }
+.display input#name{
+    width: 50%;
+    max-width: 250px;
+}
+.display textarea#description{
+    width: 90%;
+}
 .edit-entity-form{
     display: flex;
     flex-wrap: wrap;
+    flex-direction: column;
 }
 .edit-entity-form *{
     display: block;
+}
+.edit-entity-form button{
+    display: inline-block;
 }
 
 textarea#description{
@@ -157,8 +168,5 @@ textarea#description{
 @media only screen and (max-width: 500px) {
     .display {
         width: 85%;
-    }
-    .toolbar {
-        top: 60px;
     }
 }

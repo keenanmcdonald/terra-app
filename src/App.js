@@ -71,10 +71,8 @@ class App extends React.Component{
 
   dropRouteJoint(position){
     let route = this.state.entities[this.state.selected]
-    console.log(this.state.display === 'edit')
     if (!route){
       let newRoute = {position: [position], id: uuidv4(), name: '', description: '', type: 'route'}
-      console.log(newRoute)
       this.addEntity(newRoute)
     }
     else if (this.state.display === 'edit'){
