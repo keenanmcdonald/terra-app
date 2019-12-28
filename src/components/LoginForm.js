@@ -1,6 +1,11 @@
 import React from 'react'
+import config from '../config'
+import AuthApiService from '../services/auth-api-service'
+import TerraContext from '../TerraContext'
 
 class LoginForm extends React.Component{
+    static contextType = TerraContext
+
     constructor(props){
         super(props)
         this.state = {
@@ -24,7 +29,22 @@ class LoginForm extends React.Component{
 
     submitForm(e){
         e.preventDefault()
-        //submit to server
+        
+        const credentials = {
+            email: this.state.email.value,
+            password: this.state.password.value,
+        }
+
+        AuthApiService.postLogin(credentials)
+            .then(res => {
+                window.localStorage.setItem(config.TOKEN_KEY, res.authToken)
+                this.context.methods.login(res.user)
+                this.props.history.push('/')
+            })
+            .catch(res => {
+                console.log(res.error)
+            })
+        
     }
     render(){
         return (

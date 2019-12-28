@@ -10,7 +10,7 @@ class AddWaypointButton extends React.Component{
 
     render(){
         return(
-            <button className={(this.context.toolbar.selectedTool === 'add point') ? 'selected' : ''} onClick={() => this.handleClick()}>Add Waypoint</button>
+            <button className={this.context.user ? (this.context.toolbar.selectedTool === 'add point' ? 'selected' : '') : 'disabled'} onClick={() => this.handleClick()}>Add Waypoint</button>
         )
     }
 }

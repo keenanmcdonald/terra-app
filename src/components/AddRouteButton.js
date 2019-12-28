@@ -10,7 +10,7 @@ class AddRouteButton extends React.Component{
 
     render(){
         return(
-            <button className={(this.context.toolbar.selectedTool === 'add route') ? 'selected' : ''} onClick={() => this.handleClick()}>Add Route</button>
+            <button className={this.context.user ? (this.context.toolbar.selectedTool === 'add route' ? 'selected' : '') : 'disabled'} onClick={() => this.handleClick()}>Add Route</button>
         )
     }
 }

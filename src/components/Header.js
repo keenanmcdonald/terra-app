@@ -11,7 +11,7 @@ class Header extends React.Component{
                     <img className="logo" src={require('../images/terra-logo.png')} alt="logo"/>
                     <h1>Terra</h1>
                 </div>
-                <div className="account-dropdown-container">
+                <div className="account-nav-container">
                     <AccountNav/>
                 </div>
             </header>

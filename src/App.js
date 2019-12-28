@@ -6,14 +6,10 @@ import LoginForm from './components/LoginForm'
 import SignupForm from './components/SignupForm'
 import { hot } from 'react-hot-loader/root'
 import TerraContext from './TerraContext'
-import uuidv4 from 'uuid/v4'
+//import uuidv4 from 'uuid/v4'
 import './App.css'
-
-/*
-const TOOL_NONE = 0
-const TOOL_ADDWAYPOINT = 1
-const TOOL_ADDROUTE = 2
-*/
+import config from './config'
+import {Cartesian3} from 'cesium'
 
 class App extends React.Component{
   constructor(props){
@@ -22,11 +18,14 @@ class App extends React.Component{
     this.state={
       entities:[],
       selected: -1,
-      toolbar: {selectedTool: ''},
+      toolbar: {selectedTool: '', loadEntities: false},
       display: '',
+      user: undefined,
     }
 
+    this.loadEntities = this.loadEntities.bind(this)
     this.setTool = this.setTool.bind(this)
+    this.toggleLoadEntities = this.toggleLoadEntities.bind(this)
     this.setDisplay = this.setDisplay.bind(this)
     this.addEntity = this.addEntity.bind(this)
     this.updateSelected = this.updateSelected.bind(this)
@@ -36,21 +35,111 @@ class App extends React.Component{
     this.deleteSelected = this.deleteSelected.bind(this)
     this.saveSelected = this.saveSelected.bind(this)
     this.cancelEdit = this.cancelEdit.bind(this)
+    this.logout = this.logout.bind(this)
+    this.login = this.login.bind(this)
   }
-
+  parseEntityData(entities){
+    let newEntities = []
+    for (const entity of entities){
+      if (entity.type === 'waypoint'){
+        entity.position = new Cartesian3.fromArray(entity.position[0]);
+      } 
+      else if (entity.type === 'route'){
+        let newPosition = []
+        for (const position of entity.position){
+          newPosition.push(new Cartesian3.fromArray(position))
+        }
+        entity.position = newPosition
+      }
+      newEntities.push(entity)
+    }
+    return newEntities
+  }
   setTool(tool) {
     this.setState({toolbar: {...this.state.toolbar, selectedTool: tool}})
+  }
+  toggleLoadEntities(){
+    this.setState({toolbar: {...this.state.toolbar, loadEntities: !this.state.toolbar.loadEntities}})
+    this.loadEntities()
   }
   setDisplay(mode){
     this.setState({display: mode})
   }
+
+  loadEntities(){
+    if (this.state.toolbar.loadEntities){
+      fetch(`${config.API_ENDPOINT}entities`, {
+        method: 'GET',
+        headers: {
+            'content-type': 'application/json',  
+        },
+      })
+        .then(res => {
+          if (!res.ok){
+            throw new Error(res.status)
+          }
+          return res.json()
+        })
+        .then(resJson => {
+          console.log(resJson)
+          const entities = this.parseEntityData(resJson)
+          this.setState({entities})
+        })
+        .catch(error => console.log(error))
+    }   
+    else {
+      console.log(this.state.user.id)
+      fetch(`${config.API_ENDPOINT}entities/user/${this.state.user.id}`, {
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',  
+        },
+      })
+        .then(res => {
+          if (!res.ok){
+            throw new Error(res.status)
+          }
+          return res.json()
+        })
+        .then(resJson => {
+          console.log(resJson)
+          const entities = this.parseEntityData(resJson)
+          this.setState({entities})
+        })
+        .catch(error => console.log(error))
+      }
+  }
   
   addEntity(entity){
-    let entities = this.state.entities
-    const index = entities.length
-    entities.push(entity)
-    this.setState({entities: entities, selected: index})
-  }
+    let position = []
+    if (entity.type === 'waypoint'){
+      position = [[entity.position.x, entity.position.y, entity.position.z]]
+    } else if (entity.type === 'route') {
+      for (let i = 0; i < entity.position.length; i++){
+        position.push([entity.position[i].x, entity.position[i].y, entity.position[i].z])
+      }
+    }
+
+    const dbEntity = {
+      name: entity.name,
+      description: entity.description,
+      user_id: this.state.user.id,
+      type: entity.type,
+      position,
+    }
+
+    fetch(`${config.API_ENDPOINT}entities`, {
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json',  
+        },
+        body: JSON.stringify(dbEntity),
+    })
+      .then(res => {
+        this.loadEntities()
+      })
+    }
+
   updateSelected(entity){
     this.deleteSelected()
     this.addEntity(entity)
@@ -63,7 +152,7 @@ class App extends React.Component{
       this.updateSelected(waypoint)
     }
     else{
-      const waypoint = {position: position, id: uuidv4(), name: '', description: '', type: 'waypoint'}
+      const waypoint = {position: position, name: '', description: '', type: 'waypoint'}
       this.addEntity(waypoint)
       this.setDisplay('edit')
     }
@@ -72,7 +161,7 @@ class App extends React.Component{
   dropRouteJoint(position){
     let route = this.state.entities[this.state.selected]
     if (!route){
-      let newRoute = {position: [position], id: uuidv4(), name: '', description: '', type: 'route'}
+      let newRoute = {position: [position], name: '', description: '', type: 'route'}
       this.addEntity(newRoute)
     }
     else if (this.state.display === 'edit'){
@@ -105,8 +194,24 @@ class App extends React.Component{
 
   deleteSelected(){
     let entities = this.state.entities
+
+    if (this.state.user) {
+      fetch(`${config.API_ENDPOINT}entities/${entities[this.state.selected].id}`, {
+        method: 'DELETE',
+        headers: {
+            'content-type': 'application/json',  
+        },
+      })
+        .then(res => {
+          console.log(res)
+        })
+        .catch(err => console.log(err))
+    }
+
+
     entities.splice(this.state.selected, 1)
     this.setState({entities})
+
   }
 
   cancelEdit(){
@@ -118,11 +223,23 @@ class App extends React.Component{
     }
   }
 
+  login(user){
+    this.setState({user})
+  }
+
+  logout(){
+    console.log('logout')
+    this.setState({user: undefined})
+    window.localStorage.removeItem(config.TOKEN_KEY)
+  }
+
   render(){
     const contextValue = {
       ...this.state, 
       methods: {
+        loadEntities: this.loadEntities,
         setTool: this.setTool,
+        toggleLoadEntities: this.toggleLoadEntities,
         setDisplay: this.setDisplay,
         dropWaypoint: this.dropWaypoint,
         addEntity: this.addEntity,
@@ -131,6 +248,8 @@ class App extends React.Component{
         deleteSelected: this.deleteSelected,
         saveSelected: this.saveSelected,
         cancelEdit: this.cancelEdit,
+        logout: this.logout,
+        login: this.login,
       }
     }
     return (

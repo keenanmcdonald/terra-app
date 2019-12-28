@@ -1,6 +1,13 @@
 import React from 'react'
+import config from '../config'
+import AuthApiService from '../services/auth-api-service'
+import TerraContext from '../TerraContext'
+
+const REGEX_UPPER_LOWER_NUMBER = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[\S]+/
 
 class SignupForm extends React.Component{
+    static contextType = TerraContext
+
     constructor(props){
         super(props)
         this.state = {
@@ -59,17 +66,17 @@ class SignupForm extends React.Component{
     validatePassword(){
         const password = this.state.password.value
 
-        if (password.length < 7){
-            return 'password must be at least 7 characters long'
+        if (password.length < 8){
+            return 'password must be at least 8 characters long'
         }
-        else if (password.length > 20){
-            return 'password cannot be longer than 20 characters'
+        else if (password.length > 72){
+            return 'password cannot be longer than 72 characters'
         }
-        else if (!/[0-9]/.test(password)){
-            return 'password must contain at least one digit'
+        else if (password.startsWith(' ') || password.endsWith(' ')){
+            return 'Password must not start or end with spaces'
         }
-        else if (!/[A-Za-z]/.test(password)){
-            return 'password must contain at least one letter'
+        else if (!REGEX_UPPER_LOWER_NUMBER.test(password)) {
+            return 'Password must contain at least one 1 upper case, lower case and number'
         }
     }
     validateRepeatPassword(){
@@ -83,7 +90,28 @@ class SignupForm extends React.Component{
 
     submitForm(e){
         e.preventDefault()
-        //submit to server
+        
+        const user = {
+            email: this.state.email.value,
+            user_name: this.state.username.value,
+            password: this.state.password.value,
+        }
+
+        AuthApiService.postUser(user)
+            .then(res => {
+                console.log(res)
+                AuthApiService.postLogin({email: user.email, password: user.password})
+                    .then(res => {
+                        window.localStorage.setItem(config.TOKEN_KEY, res.authToken)
+                        this.context.methods.login(res.user)
+                        this.props.history.push('/')
+                    })
+                    .catch(res => {
+                        console.log(res.error)
+                    })
+                })
+            .catch(res => console.log(res.error))
+
     }
     render(){
         return (

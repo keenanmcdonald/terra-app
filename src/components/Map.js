@@ -15,7 +15,7 @@ import TerraContext from '../TerraContext'
 import Toolbar from './Toolbar'
 import Display from './Display'
 
-Ion.defaultAccessToken = process.env.CESIUM_ACCESS_KEY
+Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5ZWI5Mzc5NS1iZjNmLTQ0OTEtYTNjOS0xYWY1MTBmNGE0YjAiLCJpZCI6MTg4MzcsInNjb3BlcyI6WyJhc2wiLCJhc3IiLCJhc3ciLCJnYyJdLCJpYXQiOjE1NzQ4MTM3MDJ9.q8-BHVsogGtuJUBMi5K8V-h9frZOQWsZGJwf-CuyDCY'
 
 const terrainProvider = createWorldTerrain();
 const GRAND_TETON = {
@@ -32,6 +32,12 @@ class Map extends React.Component {
     }
 
     drawEntities(){
+        /*
+        if (this.context.toolbar.loadEntities){
+            this.context.methods.loadEntities()
+        }*/
+        this.requestRender()
+    
         return this.context.entities.map((entity, index) => {
             const isSelected = this.context.selected === index
             const pixelSize = isSelected ? 16 : 14
@@ -80,7 +86,7 @@ class Map extends React.Component {
     }
 
     handleClick(event) {
-        this.logCameraPosition()
+        //this.logCameraPosition()
         const mousePosition = event.position
         const pickedObject = this.viewer.scene.pick(mousePosition)
         if (pickedObject){
@@ -124,7 +130,9 @@ class Map extends React.Component {
         }
     }
     requestRender(){
-        this.viewer.scene.requestRender()
+        if (this.viewer){
+            this.viewer.scene.requestRender()
+        }
     }
     render() {
         const entities = this.drawEntities();
