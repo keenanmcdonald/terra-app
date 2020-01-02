@@ -55,6 +55,11 @@ h2{
     margin-bottom: auto;
     margin-right: 10px;
 }
+h3{
+    font-family: 'Montserrat', sans-serif;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
 button{
     border: solid rgba(255, 255, 255, .8) 1px;
     color: white;
@@ -72,8 +77,18 @@ button.load-entities{
 .toolbar button{
     background-color: rgba(20, 20 ,20, .7)
 }
-input {
+label {
+    display: block;
+}
+label.stay-signed-in{
+    display: inline-block;
+}
+input, textarea {
     margin: 4px;
+    background-color: transparent;
+    border: solid rgba(255, 255, 255, .8) 1px;
+    border-radius: 5px;
+    color: white;
 }
 button:hover{
     background-color: rgba(100, 149, 237, .3)
@@ -114,6 +129,20 @@ button.disabled:hover{
     top: 62px;
     left: 20px;
 }
+.form-display{
+    position: absolute;
+    background-image: linear-gradient(rgba(0, 0, 0, .95), rgba(20, 20 ,20, .5));
+    color: white;
+    top: 60px;
+    z-index: 2;
+    margin-left:5%;
+    margin-right: 5%;
+    width: 90%;
+    height: 80%;
+    border: white 1px solid;
+    border-radius: 5px;
+    padding: 5%;
+}
 .display{
     color: white;
     border: solid white 1px;
@@ -131,11 +160,6 @@ button.disabled:hover{
 }
 .display *{
     color: white;
-}
-.display input, textarea{
-    background-color: transparent;
-    border: solid rgba(255, 255, 255, .8) 1px;
-    border-radius: 5px;
 }
 .display input#name{
     width: 50%;
@@ -170,9 +194,6 @@ textarea#description{
 }
 .cesium-viewer-geocoderContainer{
     margin-right: 20px;
-}
-.login-form, .signup-form{
-    padding-top: 60px;
 }
 
 @media only screen and (max-width: 500px) {

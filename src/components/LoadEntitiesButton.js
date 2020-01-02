@@ -5,12 +5,12 @@ class LoadEntitiesButton extends React.Component {
     static contextType = TerraContext
     
     handleClick(){
-        this.context.methods.toggleLoadEntities()
+        this.context.methods.toggleLoadForeignEntities()
     }
 
     render(){
         return(
-            <button className={(this.context.user ? (this.context.toolbar.loadEntities ? 'selected' : '') : 'disabled') + ' load-entities'} onClick={() => this.handleClick()}>see other users' data</button>
+            <button className={(this.context.user ? (this.context.toolbar.loadForeignEntities ? 'selected' : '') : 'disabled') + ' load-entities'} onClick={() => this.handleClick()}>see other users' data</button>
         )
     }
 }

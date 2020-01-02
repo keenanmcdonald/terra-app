@@ -14,8 +14,9 @@ class EntityInfo extends React.Component{
     render(){
         return (
             <div>
-                <h2>Name: {this.props.name}</h2> 
+                <p>Name: {this.props.name}</p> 
                 <p>Description: {this.props.description}</p>
+                <p>Created By: {this.props.user}</p>
                 <button onClick={e => this.context.methods.setDisplay('edit')}>Edit</button>
                 <button onClick={e => this.handleDelete()}>Delete</button>
             </div>

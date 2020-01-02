@@ -1,12 +1,8 @@
 import React from 'react'
 import Header from './components/Header'
 import Map from './components/Map'
-import {Route} from 'react-router-dom'
-import LoginForm from './components/LoginForm'
-import SignupForm from './components/SignupForm'
 import { hot } from 'react-hot-loader/root'
 import TerraContext from './TerraContext'
-//import uuidv4 from 'uuid/v4'
 import './App.css'
 import config from './config'
 import {Cartesian3} from 'cesium'
@@ -18,14 +14,13 @@ class App extends React.Component{
     this.state={
       entities:[],
       selected: -1,
-      toolbar: {selectedTool: '', loadEntities: false},
+      toolbar: {selectedTool: '', loadForeignEntities: false},
       display: '',
       user: undefined,
     }
-
     this.loadEntities = this.loadEntities.bind(this)
     this.setTool = this.setTool.bind(this)
-    this.toggleLoadEntities = this.toggleLoadEntities.bind(this)
+    this.toggleLoadForeignEntities = this.toggleLoadForeignEntities.bind(this)
     this.setDisplay = this.setDisplay.bind(this)
     this.addEntity = this.addEntity.bind(this)
     this.updateSelected = this.updateSelected.bind(this)
@@ -38,6 +33,43 @@ class App extends React.Component{
     this.logout = this.logout.bind(this)
     this.login = this.login.bind(this)
   }
+
+
+  getCookieByName(name) 
+    {
+      var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
+      if (match) {
+        return match[2]
+      }
+      else{
+        return undefined
+      }
+   }
+
+  //will check to see if there is a login token saved in the user's cookies and log in the user if there is
+  componentDidMount(){
+    /*
+    const authToken = this.getCookieByName('authToken')
+    const user = this.getCookieByName('user')
+    console.log(user)
+    this.login(user)
+    
+    if (document.cookie.authToken){
+      fetch(`${config.API_ENDPOINT}auth/verify-token`,  {       
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json',  
+        },
+        body: JSON.stringify(authToken),
+      })
+        .then(res => {
+          console.log(res)
+          this.login(user)
+        })
+    }*/
+  }
+
+  //takes entity data as it is provided from the server and converts position data to the proper Cesium objects
   parseEntityData(entities){
     let newEntities = []
     for (const entity of entities){
@@ -55,19 +87,23 @@ class App extends React.Component{
     }
     return newEntities
   }
+
   setTool(tool) {
     this.setState({toolbar: {...this.state.toolbar, selectedTool: tool}})
   }
-  toggleLoadEntities(){
-    this.setState({toolbar: {...this.state.toolbar, loadEntities: !this.state.toolbar.loadEntities}})
+
+  toggleLoadForeignEntities(){
+    this.setState({toolbar: {...this.state.toolbar, loadForeignEntities: !this.state.toolbar.loadForeignEntities}})
     this.loadEntities()
   }
+
   setDisplay(mode){
     this.setState({display: mode})
   }
 
+  //checks 'loadForeignEntities' and loads either the current users entities or all users entities into the state
   loadEntities(){
-    if (this.state.toolbar.loadEntities){
+    if (this.state.toolbar.loadForeignEntities){
       fetch(`${config.API_ENDPOINT}entities`, {
         method: 'GET',
         headers: {
@@ -81,15 +117,15 @@ class App extends React.Component{
           return res.json()
         })
         .then(resJson => {
-          console.log(resJson)
           const entities = this.parseEntityData(resJson)
+          console.log(entities)
           this.setState({entities})
         })
         .catch(error => console.log(error))
     }   
     else {
-      console.log(this.state.user.id)
-      fetch(`${config.API_ENDPOINT}entities/user/${this.state.user.id}`, {
+      console.log(this.state.user.user_name)
+      fetch(`${config.API_ENDPOINT}entities/user/${this.state.user.user_name}`, {
         method: 'GET',
         headers: {
           'content-type': 'application/json',  
@@ -102,14 +138,15 @@ class App extends React.Component{
           return res.json()
         })
         .then(resJson => {
-          console.log(resJson)
           const entities = this.parseEntityData(resJson)
+          console.log(entities)
           this.setState({entities})
         })
         .catch(error => console.log(error))
       }
   }
   
+  //accepts an entity object as an argument and posts the entity to the server
   addEntity(entity){
     let position = []
     if (entity.type === 'waypoint'){
@@ -123,7 +160,7 @@ class App extends React.Component{
     const dbEntity = {
       name: entity.name,
       description: entity.description,
-      user_id: this.state.user.id,
+      user_name: this.state.user.user_name,
       type: entity.type,
       position,
     }
@@ -138,7 +175,7 @@ class App extends React.Component{
       .then(res => {
         this.loadEntities()
       })
-    }
+  }
 
   updateSelected(entity){
     this.deleteSelected()
@@ -223,12 +260,13 @@ class App extends React.Component{
     }
   }
 
+  //takes user object as an argument, loads user to the state, and calls loadEntities
   login(user){
     this.setState({user})
+    this.loadEntities()
   }
 
   logout(){
-    console.log('logout')
     this.setState({user: undefined})
     window.localStorage.removeItem(config.TOKEN_KEY)
   }
@@ -239,7 +277,7 @@ class App extends React.Component{
       methods: {
         loadEntities: this.loadEntities,
         setTool: this.setTool,
-        toggleLoadEntities: this.toggleLoadEntities,
+        toggleLoadForeignEntities: this.toggleLoadForeignEntities,
         setDisplay: this.setDisplay,
         dropWaypoint: this.dropWaypoint,
         addEntity: this.addEntity,
@@ -257,9 +295,7 @@ class App extends React.Component{
         <TerraContext.Provider value={contextValue}>
         <Header />
           <main>
-            <Route exact path='/' component={Map}/>
-            <Route path='/login' component={LoginForm}/>
-            <Route path='/signup' component={SignupForm}/>
+            <Map displaySearchButton={this.state.displaySearchButton}/>
           </main>
         </TerraContext.Provider>
       </div>

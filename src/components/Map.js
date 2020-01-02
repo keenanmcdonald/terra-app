@@ -14,6 +14,10 @@ import {
 import TerraContext from '../TerraContext'
 import Toolbar from './Toolbar'
 import Display from './Display'
+import {Route} from 'react-router-dom'
+import LoginForm from './LoginForm'
+import SignupForm from './SignupForm'
+
 
 Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5ZWI5Mzc5NS1iZjNmLTQ0OTEtYTNjOS0xYWY1MTBmNGE0YjAiLCJpZCI6MTg4MzcsInNjb3BlcyI6WyJhc2wiLCJhc3IiLCJhc3ciLCJnYyJdLCJpYXQiOjE1NzQ4MTM3MDJ9.q8-BHVsogGtuJUBMi5K8V-h9frZOQWsZGJwf-CuyDCY'
 
@@ -137,6 +141,7 @@ class Map extends React.Component {
     render() {
         const entities = this.drawEntities();
         const display = this.context.display ? <Display requestRender={() => this.requestRender()}/> : ''
+        console.log(this.props.match)
 
         return (
             <div className='map-container'>
@@ -158,13 +163,15 @@ class Map extends React.Component {
                     maximumRenderTimeChange= {Infinity}
                     scene3DOnly={true}>
                     <Globe depthTestAgainstTerrain={true}>
-                        <Toolbar/>
                         {entities}
                         {display}
                         <ScreenSpaceEventHandler>
                             <ScreenSpaceEvent action={e => this.handleClick(e)} type={ScreenSpaceEventType.LEFT_CLICK} />
                             <ScreenSpaceEvent action={e => this.handleHover(e)} type={ScreenSpaceEventType.MOUSE_MOVE}/>
                         </ScreenSpaceEventHandler>
+                        <Route exact path='/' component={Toolbar}/>
+                        <Route path='/login' component={LoginForm}/>
+                        <Route path='/signup' component={SignupForm}/>
                     </Globe>
                 </Viewer>
             </div>
