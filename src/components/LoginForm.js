@@ -68,7 +68,7 @@ class LoginForm extends React.Component{
                     <input name='password' id='password' type='password' onChange={e => this.updatePassword(e.target.value)}/>
                     <br/>
                     <input name='staySignedIn' id='staySignedIn' type='checkbox' onChange={e => this.updateStaySignedIn(e.target.value)}/>
-                    <label htmlFor='staySignedIn' class='stay-signed-in'>Stay signed in</label>
+                    <label htmlFor='staySignedIn' className='stay-signed-in'>Stay signed in</label>
                     <button id='submit' type='submit' 
                         onClick={e => this.submitForm(e)} 
                     >

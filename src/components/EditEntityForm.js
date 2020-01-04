@@ -21,7 +21,7 @@ class EditEntityForm extends React.Component{
         this.setState({description: description})
     }
     handleCancel(){
-        this.context.methods.setDisplay('')
+        this.context.methods.setMode('')
         this.context.methods.cancelEdit()
         this.props.requestRender()
     }

@@ -9,11 +9,11 @@ class Display extends React.Component{
     render(){
         const selected = this.context.entities[this.context.selected] ? this.context.entities[this.context.selected] : {name: '', description: ''}
         let content;
-        if(this.context.display === 'edit'){
+        if(this.context.mode === 'edit'){
             content = <EditEntityForm name={selected.name} description={selected.description} requestRender={this.props.requestRender}/>
         }
-        else if (this.context.display === 'info'){
-            content = <EntityInfo name={selected.name} description={selected.description} user={selected.user.user_name} requestRender={this.props.requestRender}/>
+        else if (this.context.mode === 'info'){
+            content = <EntityInfo name={selected.name} description={selected.description} user={selected.user_name} requestRender={this.props.requestRender}/>
         }
         return(
             <div className='display-container'>

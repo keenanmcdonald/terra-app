@@ -15,19 +15,19 @@ class App extends React.Component{
       entities:[],
       selected: -1,
       toolbar: {selectedTool: '', loadForeignEntities: false},
-      display: '',
+      mode: '',
       user: undefined,
     }
+
     this.loadEntities = this.loadEntities.bind(this)
     this.setTool = this.setTool.bind(this)
     this.toggleLoadForeignEntities = this.toggleLoadForeignEntities.bind(this)
-    this.setDisplay = this.setDisplay.bind(this)
-    this.addEntity = this.addEntity.bind(this)
-    this.updateSelected = this.updateSelected.bind(this)
+    this.setMode = this.setMode.bind(this)
+    this.uploadEntity = this.uploadEntity.bind(this)
     this.dropWaypoint = this.dropWaypoint.bind(this)
     this.dropRouteJoint = this.dropRouteJoint.bind(this)
     this.selectEntity = this.selectEntity.bind(this)
-    this.deleteSelected = this.deleteSelected.bind(this)
+    this.deleteEntity = this.deleteEntity.bind(this)
     this.saveSelected = this.saveSelected.bind(this)
     this.cancelEdit = this.cancelEdit.bind(this)
     this.logout = this.logout.bind(this)
@@ -70,6 +70,7 @@ class App extends React.Component{
   }
 
   //takes entity data as it is provided from the server and converts position data to the proper Cesium objects
+  //also marks any all entities as 'saved' since they were just pulled from the server
   parseEntityData(entities){
     let newEntities = []
     for (const entity of entities){
@@ -82,7 +83,9 @@ class App extends React.Component{
           newPosition.push(new Cartesian3.fromArray(position))
         }
         entity.position = newPosition
+        entity.saved = true
       }
+      entity.saved = true
       newEntities.push(entity)
     }
     return newEntities
@@ -97,8 +100,8 @@ class App extends React.Component{
     this.loadEntities()
   }
 
-  setDisplay(mode){
-    this.setState({display: mode})
+  setMode(mode){
+    this.setState({mode})
   }
 
   //checks 'loadForeignEntities' and loads either the current users entities or all users entities into the state
@@ -118,13 +121,11 @@ class App extends React.Component{
         })
         .then(resJson => {
           const entities = this.parseEntityData(resJson)
-          console.log(entities)
           this.setState({entities})
         })
         .catch(error => console.log(error))
     }   
     else {
-      console.log(this.state.user.user_name)
       fetch(`${config.API_ENDPOINT}entities/user/${this.state.user.user_name}`, {
         method: 'GET',
         headers: {
@@ -139,7 +140,6 @@ class App extends React.Component{
         })
         .then(resJson => {
           const entities = this.parseEntityData(resJson)
-          console.log(entities)
           this.setState({entities})
         })
         .catch(error => console.log(error))
@@ -147,7 +147,7 @@ class App extends React.Component{
   }
   
   //accepts an entity object as an argument and posts the entity to the server
-  addEntity(entity){
+  uploadEntity(entity){
     let position = []
     if (entity.type === 'waypoint'){
       position = [[entity.position.x, entity.position.y, entity.position.z]]
@@ -177,36 +177,28 @@ class App extends React.Component{
       })
   }
 
-  updateSelected(entity){
-    this.deleteSelected()
-    this.addEntity(entity)
-  }
 
+  //creates a new waypoint and puts it in the state, does NOT upload to the server
   dropWaypoint(position) {
-    if (this.state.display === 'edit'){
-      let waypoint = this.state.entities[this.state.selected]
-      waypoint.position = position
-      this.updateSelected(waypoint)
-    }
-    else{
-      const waypoint = {position: position, name: '', description: '', type: 'waypoint'}
-      this.addEntity(waypoint)
-      this.setDisplay('edit')
-    }
+    const waypoint = {position: position, name: '', description: '', type: 'waypoint', user_name: this.state.user.user_name, saved: false, id: -1}
+    let entities = this.state.entities
+    entities.push(waypoint)
+    this.setState({entities, selected: entities.length-1})
+    this.setMode('edit')
   }
 
   dropRouteJoint(position){
     let route = this.state.entities[this.state.selected]
     if (!route){
       let newRoute = {position: [position], name: '', description: '', type: 'route'}
-      this.addEntity(newRoute)
+      this.uploadEntity(newRoute)
     }
-    else if (this.state.display === 'edit'){
+    else if (this.state.mode === 'edit'){
       route.position.push(position)
       this.updateSelected(route)
     }
     else{
-      this.setState({selected: -1, display: ''})
+      this.setState({selected: -1, mode: ''})
     }
   }
 
@@ -217,7 +209,7 @@ class App extends React.Component{
         this.setState({selected: i})
       }
     }
-    this.setDisplay('info')
+    this.setMode('info')
   }
 
   saveSelected(e, name, description){
@@ -225,15 +217,16 @@ class App extends React.Component{
     let entity = this.state.entities[this.state.selected]
     entity.name = name
     entity.description = description
-    this.updateSelected(entity)
-    this.setDisplay('info')
+    this.deleteEntity(this.state.selected)
+    this.uploadEntity(entity)
+    this.setMode('')
   }
 
-  deleteSelected(){
+  deleteEntity(index){
     let entities = this.state.entities
 
     if (this.state.user) {
-      fetch(`${config.API_ENDPOINT}entities/${entities[this.state.selected].id}`, {
+      fetch(`${config.API_ENDPOINT}entities/${entities[index].id}`, {
         method: 'DELETE',
         headers: {
             'content-type': 'application/json',  
@@ -245,18 +238,18 @@ class App extends React.Component{
         .catch(err => console.log(err))
     }
 
-
-    entities.splice(this.state.selected, 1)
+    entities.splice(index, 1)
     this.setState({entities})
-
   }
 
   cancelEdit(){
-    if (!this.state.entities[this.state.selected].name){
-      this.deleteSelected()
+    if (!this.state.entities[this.state.selected].saved){
+      let entities = this.state.entities
+      entities.splice(this.state.selected, 1)
+      this.setState({entities})
     }
     else{
-      this.setDisplay('info')
+      this.setMode('info')
     }
   }
 
@@ -278,12 +271,12 @@ class App extends React.Component{
         loadEntities: this.loadEntities,
         setTool: this.setTool,
         toggleLoadForeignEntities: this.toggleLoadForeignEntities,
-        setDisplay: this.setDisplay,
+        setMode: this.setMode,
         dropWaypoint: this.dropWaypoint,
-        addEntity: this.addEntity,
+        uploadEntity: this.uploadEntity,
         selectEntity: this.selectEntity,
         dropRouteJoint: this.dropRouteJoint,
-        deleteSelected: this.deleteSelected,
+        deleteEntity: this.deleteEntity,
         saveSelected: this.saveSelected,
         cancelEdit: this.cancelEdit,
         logout: this.logout,

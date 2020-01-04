@@ -41,12 +41,23 @@ class Map extends React.Component {
             this.context.methods.loadEntities()
         }*/
         this.requestRender()
+
+        let entities = this.context.entities
     
-        return this.context.entities.map((entity, index) => {
-            const isSelected = this.context.selected === index
+        return entities.map((entity, index) => {
+            const isSelected = this.context.selected === index || !entity.saved
             const pixelSize = isSelected ? 16 : 14
             const width = isSelected ? 6 : 4
             const outlineWidth = isSelected ? 2 : 0
+
+            let color = Color.DARKBLUE
+            if (!entity.saved) {
+                color = Color.WHITE
+            }
+            else if (this.context.user && (this.context.user.user_name === entity.user_name)) {
+                color = Color.CORNFLOWERBLUE
+            }
+
             if (entity.type === 'waypoint'){
                 return (
                     <Entity 
@@ -55,7 +66,7 @@ class Map extends React.Component {
                         position={entity.position}
                         point={{
                             pixelSize,
-                            color: Color.CORNFLOWERBLUE,
+                            color,
                             outlineColor: Color.WHITE,
                             outlineWidth,
                             disableDepthTestDistance: Number.POSITIVE_INFINITY
@@ -74,7 +85,7 @@ class Map extends React.Component {
                             width,
                             clampToGround: true,
                             material: new PolylineOutlineMaterialProperty({
-                                color: Color.CORNFLOWERBLUE,
+                                color,
                                 outlineColor: Color.WHITE,
                                 outlineWidth: outlineWidth
                             }),
@@ -82,13 +93,14 @@ class Map extends React.Component {
                     />
                 )
             }
-        }) 
+        })
     }
 
     logCameraPosition(){
         console.log(this.viewer.camera)
     }
 
+    //when a user clicks on the map, if the user clicked on an entity -> selects the entity, if not -> checks current selected tool and drops a new waypoint or route
     handleClick(event) {
         //this.logCameraPosition()
         const mousePosition = event.position
@@ -108,7 +120,7 @@ class Map extends React.Component {
             this.getClickPosition(mousePosition, this.viewer.scene)
                 .then(position => {
                     this.context.methods.dropRouteJoint(position)
-                    this.context.methods.setDisplay('edit')
+                    this.context.methods.setMode('edit')
                 })
                 .catch(error => console.log(error))
         }
@@ -140,8 +152,7 @@ class Map extends React.Component {
     }
     render() {
         const entities = this.drawEntities();
-        const display = this.context.display ? <Display requestRender={() => this.requestRender()}/> : ''
-        console.log(this.props.match)
+        const display = this.context.mode ? <Display requestRender={() => this.requestRender()}/> : ''
 
         return (
             <div className='map-container'>

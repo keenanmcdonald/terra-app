@@ -2,6 +2,7 @@ import config from '../config'
 
 const AuthApiService = {
     postLogin(credentials) {
+        console.log('postlogin')
         return fetch(`${config.API_ENDPOINT}auth/login`, {
             method: 'POST',
             headers: {
@@ -10,7 +11,11 @@ const AuthApiService = {
             body: JSON.stringify(credentials),
         })
             .then(res => {
-                return (!res.ok) ? res.json().then(e => Promise.reject(e)) : res.json()
+                console.log(res)
+                if (!res.ok){
+                    throw new Error(res.status)
+                }
+                return res.json()            
             })
     },
 
@@ -23,8 +28,12 @@ const AuthApiService = {
             body: JSON.stringify(user),
         })
             .then(res => {
-                return (!res.ok) ? res.json().then(e => Promise.reject(e)) : res.json()
+                if (!res.ok){
+                    throw new Error(res.status)
+                }
+                return res.json()
             })
+            .catch(error => console.log(error))
     }
 }
 

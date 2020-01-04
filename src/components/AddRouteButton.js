@@ -6,6 +6,8 @@ class AddRouteButton extends React.Component{
 
     handleClick(){
         this.context.methods.setTool('add route')
+        this.context.methods.selectEntity(-1)
+        this.context.methods.setMode('')
     }
 
     render(){

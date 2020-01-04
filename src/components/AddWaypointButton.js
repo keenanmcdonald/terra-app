@@ -6,6 +6,8 @@ class AddWaypointButton extends React.Component{
 
     handleClick(){
         this.context.methods.setTool('add point')
+        this.context.methods.selectEntity(-1)
+        this.context.methods.setMode('')
     }
 
     render(){
