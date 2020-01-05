@@ -14,13 +14,12 @@ class App extends React.Component{
     this.state={
       entities:[],
       selected: -1,
-      toolbar: {selectedTool: '', loadForeignEntities: false},
+      loadForeignEntities: false,
       mode: '',
       user: undefined,
     }
 
     this.loadEntities = this.loadEntities.bind(this)
-    this.setTool = this.setTool.bind(this)
     this.toggleLoadForeignEntities = this.toggleLoadForeignEntities.bind(this)
     this.setMode = this.setMode.bind(this)
     this.uploadEntity = this.uploadEntity.bind(this)
@@ -91,13 +90,10 @@ class App extends React.Component{
     return newEntities
   }
 
-  setTool(tool) {
-    this.setState({toolbar: {...this.state.toolbar, selectedTool: tool}})
-  }
-
   toggleLoadForeignEntities(){
-    this.setState({toolbar: {...this.state.toolbar, loadForeignEntities: !this.state.toolbar.loadForeignEntities}})
-    this.loadEntities()
+    this.setState({loadForeignEntities: !this.state.loadForeignEntities}, () => {
+      this.loadEntities()
+    })
   }
 
   setMode(mode){
@@ -106,7 +102,7 @@ class App extends React.Component{
 
   //checks 'loadForeignEntities' and loads either the current users entities or all users entities into the state
   loadEntities(){
-    if (this.state.toolbar.loadForeignEntities){
+    if (this.state.loadForeignEntities){
       fetch(`${config.API_ENDPOINT}entities`, {
         method: 'GET',
         headers: {
@@ -184,7 +180,7 @@ class App extends React.Component{
     let entities = this.state.entities
     entities.push(waypoint)
     this.setState({entities, selected: entities.length-1})
-    this.setMode('edit')
+    this.setMode('create')
   }
 
   dropRouteJoint(position){
@@ -209,7 +205,7 @@ class App extends React.Component{
         this.setState({selected: i})
       }
     }
-    this.setMode('info')
+    this.setMode('select')
   }
 
   saveSelected(e, name, description){
@@ -217,9 +213,13 @@ class App extends React.Component{
     let entity = this.state.entities[this.state.selected]
     entity.name = name
     entity.description = description
-    this.deleteEntity(this.state.selected)
+    if (this.state.mode === 'edit'){
+      this.deleteEntity(this.state.selected)
+    }
     this.uploadEntity(entity)
-    this.setMode('')
+
+    const mode = this.state.mode === 'create' ? '' : 'select'
+    this.setMode(mode)
   }
 
   deleteEntity(index){
@@ -249,7 +249,7 @@ class App extends React.Component{
       this.setState({entities})
     }
     else{
-      this.setMode('info')
+      this.setMode('select')
     }
   }
 
@@ -269,7 +269,6 @@ class App extends React.Component{
       ...this.state, 
       methods: {
         loadEntities: this.loadEntities,
-        setTool: this.setTool,
         toggleLoadForeignEntities: this.toggleLoadForeignEntities,
         setMode: this.setMode,
         dropWaypoint: this.dropWaypoint,

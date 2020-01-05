@@ -37,7 +37,7 @@ class Map extends React.Component {
 
     drawEntities(){
         /*
-        if (this.context.toolbar.loadEntities){
+        if (this.context.loadEntities){
             this.context.methods.loadEntities()
         }*/
         this.requestRender()
@@ -45,14 +45,14 @@ class Map extends React.Component {
         let entities = this.context.entities
     
         return entities.map((entity, index) => {
-            const isSelected = this.context.selected === index || !entity.saved
+            const isSelected = (this.context.selected === index || !entity.saved) && this.context.mode === 'select'
             const pixelSize = isSelected ? 16 : 14
             const width = isSelected ? 6 : 4
             const outlineWidth = isSelected ? 2 : 0
 
-            let color = Color.DARKBLUE
+            let color = Color.DODGERBLUE
             if (!entity.saved) {
-                color = Color.WHITE
+                color = Color.LIGHTBLUE
             }
             else if (this.context.user && (this.context.user.user_name === entity.user_name)) {
                 color = Color.CORNFLOWERBLUE
@@ -109,20 +109,23 @@ class Map extends React.Component {
             this.context.methods.selectEntity(pickedObject.id.id)
             this.viewer.scene.requestRender()
         }
-        else if (this.context.toolbar.selectedTool === 'add point'){
+        else if (this.context.mode === 'add point'){
             this.getClickPosition(mousePosition, this.viewer.scene)
                 .then(position => {
                     this.context.methods.dropWaypoint(position)
                 })
                 .catch(error => console.log(error))
         }
-        else if (this.context.toolbar.selectedTool === 'add route'){
+        else if (this.context.mode === 'add route'){
             this.getClickPosition(mousePosition, this.viewer.scene)
                 .then(position => {
                     this.context.methods.dropRouteJoint(position)
                     this.context.methods.setMode('edit')
                 })
                 .catch(error => console.log(error))
+        }
+        else {
+            this.context.methods.setMode('')
         }
     }
     async getClickPosition(mousePosition, scene){

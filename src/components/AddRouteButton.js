@@ -5,14 +5,12 @@ class AddRouteButton extends React.Component{
     static contextType = TerraContext
 
     handleClick(){
-        this.context.methods.setTool('add route')
-        this.context.methods.selectEntity(-1)
-        this.context.methods.setMode('')
+        this.context.methods.setMode('add route')
     }
 
     render(){
         return(
-            <button className={this.context.user ? (this.context.toolbar.selectedTool === 'add route' ? 'selected' : '') : 'disabled'} onClick={() => this.handleClick()}>Add Route</button>
+            <button className={this.context.user ? (this.context.mode === 'add route' ? 'selected' : '') : 'disabled'} onClick={() => this.handleClick()}>Add Route</button>
         )
     }
 }
