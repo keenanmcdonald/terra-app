@@ -11,11 +11,10 @@ const AuthApiService = {
             body: JSON.stringify(credentials),
         })
             .then(res => {
-                console.log(res)
                 if (!res.ok){
-                    throw new Error(res.status)
+                    throw new Error(res.error)
                 }
-                return res.json()            
+                return res.json()
             })
     },
 

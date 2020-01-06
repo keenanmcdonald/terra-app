@@ -48,15 +48,18 @@ class Map extends React.Component {
         return entities.map((entity, index) => {
             const isSelected = (this.context.selected === index || !entity.saved) && this.context.mode === 'select'
             entity.isSelected = isSelected
+            let outlineColor = isSelected ? Color.WHITE : Color.GREY
 
-            let color = Color.DODGERBLUE
+            let color = Color.CORNFLOWERBLUE
             if (!entity.saved) {
-                color = Color.LIGHTBLUE
+                color = new Color.fromBytes(116, 192, 67, 100)
+                outlineColor = Color.WHITE
             }
             else if (this.context.user && (this.context.user.user_name === entity.user_name)) {
-                color = Color.CORNFLOWERBLUE
+                color = new Color.fromBytes(116, 192, 67, 255)
             }
             entity.color = color
+            entity.outlineColor = outlineColor
 
             if (entity.type === 'waypoint'){
                 return this.drawWaypoint(entity)
@@ -69,17 +72,18 @@ class Map extends React.Component {
 
     drawWaypoint(waypoint){
         const pixelSize = waypoint.isSelected ? 16 : 14
-        const outlineWidth = waypoint.isSelected ? 2 : 0
+        const outlineWidth = waypoint.isSelected ? 2 : 1
 
         return (
             <Entity 
                 key={waypoint.id}
                 id={waypoint.id}
                 position={waypoint.position}
+                type={'waypoint'}
                 point={{
                     pixelSize,
                     color: waypoint.color,
-                    outlineColor: Color.WHITE,
+                    outlineColor: waypoint.outlineColor,
                     outlineWidth,
                     disableDepthTestDistance: Number.POSITIVE_INFINITY
                 }}
@@ -88,21 +92,25 @@ class Map extends React.Component {
     }
 
     drawRoute(route){
-        const pixelSize = route.isSelected ? 12 : 10
-        const width = route.isSelected ? 6 : 4
+        const width = route.isSelected ? 7 : 5
         const outlineWidth = route.isSelected ? 2 : 0
 
         let joints = [];
         for (let i = 0; i < route.position.length; i++){
+            const isEndpoint = (i === 0 || i === route.position.length-1)
+            const pixelSize = route.isSelected ? (isEndpoint ? 12 : 8) : (isEndpoint ? 10 : 8)
             joints.push(
                 <Entity
                     key={`r${route.id}j${i}`}
                     id={`r${route.id}j${i}`}
-                    isEndpoint={(i === 0 || i === route.position.length-1)}
+                    isEndpoint={isEndpoint}
+                    type={'joint'}
                     position={route.position[i]}
                     point={{
                         pixelSize,
                         color: route.color,
+                        outlineColor: route.outlineColor,
+                        outlineWidth: isEndpoint ? 1 : 0,
                         disableDepthTestDistance: Number.POSITIVE_INFINITY
                     }}
                 />
@@ -113,6 +121,7 @@ class Map extends React.Component {
                 <Entity
                     key={route.id}
                     id={route.id}
+                    type={'polyline'}
                     position={route.position[0]}
                     polyline={new PolylineGraphics({
                         positions: route.position,
@@ -142,8 +151,16 @@ class Map extends React.Component {
         //this.logCameraPosition()
         const mousePosition = event.position
         const pickedObject = this.viewer.scene.pick(mousePosition)
+        console.log(pickedObject)
         if (pickedObject){
-            this.context.methods.selectEntity(pickedObject.id.id)
+            let id;
+            if (pickedObject.id.type === 'joint'){
+                id = parseInt(pickedObject.id.id.split(/[a-zA-Z]/)[1])
+            }
+            else{
+                id = pickedObject.id.id
+            }
+            this.context.methods.selectEntity(id)
         }
         else if (this.context.mode === 'add point'){
             this.getClickPosition(mousePosition, this.viewer.scene)
@@ -218,11 +235,11 @@ class Map extends React.Component {
                         {message}
                         {entities}
                         {display}
+                        <Toolbar/>
                         <ScreenSpaceEventHandler>
                             <ScreenSpaceEvent action={e => this.handleClick(e)} type={ScreenSpaceEventType.LEFT_CLICK} />
                             <ScreenSpaceEvent action={e => this.handleHover(e)} type={ScreenSpaceEventType.MOUSE_MOVE}/>
                         </ScreenSpaceEventHandler>
-                        <Route exact path='/' component={Toolbar}/>
                         <Route path='/login' component={LoginForm}/>
                         <Route path='/signup' component={SignupForm}/>
                     </Globe>

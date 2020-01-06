@@ -12,13 +12,14 @@ class AddRouteButton extends React.Component{
     render(){
         let button;
         if (this.context.user && ['add point', 'add route', 'select',''].some(item => item === this.context.mode)){
-            button = <button className={this.context.mode === 'add route' ? 'selected' : ''} onClick={() => this.handleClick()}>Add Route</button>
+            button = <button className={this.context.mode === 'add route' ? 'selected' : ''}><img className='icon' src="./route.png" alt="route icon" onClick={() => this.handleClick()} /></button>
         }
         else{
-            button = <button className='disabled'>Add Route</button>
+            button = <button className='disabled'><img className='icon' src="./route.png" alt="route icon"/></button>
         }
         return(
-            <div>
+            <div className="tooltip">
+                <span class='tooltip-text'>Add Route</span>
                 {button}
             </div>
         )

@@ -12,13 +12,14 @@ class AddWaypointButton extends React.Component{
     render(){
         let button;
         if (this.context.user && ['add point', 'add route', 'select',''].some(item => item === this.context.mode)){
-            button = <button className={this.context.mode === 'add point' ? 'selected' : ''} onClick={() => this.handleClick()}>Add Waypoint</button>
+            button = <button className={this.context.mode === 'add point' ? 'selected' : ''}><img className='icon' src="./waypoint.png" alt="waypoint icon" onClick={() => this.handleClick()} /></button>
         }
         else{
-            button = <button className='disabled'>Add Waypoint</button>
+            button = <button className='disabled'><img className='icon' src="./waypoint.png" alt="waypoint icon" /></button>
         }
         return(
-            <div>
+            <div className='tooltip'>
+                <span class='tooltip-text'>Add Waypoint</span>
                 {button}
             </div>
         )

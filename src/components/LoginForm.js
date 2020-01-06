@@ -18,6 +18,7 @@ class LoginForm extends React.Component{
                 touched: false,
             },
             staySignedIn: false,
+            error: '',
         }
     }
 
@@ -41,6 +42,8 @@ class LoginForm extends React.Component{
 
         AuthApiService.postLogin(credentials)
             .then(res => {
+                console.log('uncaught: ' + res)
+                this.setState({error: ''})
                 window.localStorage.setItem(config.TOKEN_KEY, res.authToken)
                 if(this.state.staySignedIn){
                     let expiryDate = new Date()
@@ -52,7 +55,8 @@ class LoginForm extends React.Component{
                 this.props.history.push('/')
             })
             .catch(res => {
-                console.log(res.error)
+                console.log(res)
+                //put error message in state
             })
         
     }
@@ -75,6 +79,7 @@ class LoginForm extends React.Component{
                         Login
                     </button>
                 </form> 
+                <p className='error'>{this.state.error}</p> 
             </div>
         )
     }

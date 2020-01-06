@@ -40,10 +40,12 @@ header {
     width: 100%;
     z-index: 1;
     color: white;
+    height: 47px;
 }
-
-h1 { 
-    margin-left: 6px;
+h1 {
+    position: absolute;
+    top: 10px;
+    margin-left: 42px;
     display: inline-block;
     font-family: 'Montserrat', sans-serif;
     font-size: 24px;
@@ -61,7 +63,7 @@ h3{
     margin-bottom: 20px;
 }
 button{
-    border: solid rgba(255, 255, 255, .8) 1px;
+    border: solid white 1px;
     color: white;
     background-color: transparent;
     border-radius: 5px;
@@ -103,6 +105,13 @@ button:hover{
 }
 .logo {
     height: 40px;
+    position: absolute;
+    top: 3px;
+}
+
+.icon{
+    height: 18px;
+    width: 18px;
 }
 button.selected{
     background-color: rgb(100, 149, 237);
@@ -111,12 +120,15 @@ button.disabled{
     color: grey;
     border-color: grey;
 }
-button.disabled:hover{
-    background-color: transparent;
+button.disabled img {
+    filter: brightness(30%);
+}
+.display-buttons button{
+    display: inline-block
 }
 .account-nav{
     display: flex;
-    margin-top: 8px;
+    margin-top: 10px;
 }
 .title {
     cursor: pointer;
@@ -127,7 +139,7 @@ button.disabled:hover{
 .toolbar{
     position: absolute;
     top: 62px;
-    left: 20px;
+    left: 21px;
 }
 .form-display{
     position: absolute;
@@ -135,13 +147,22 @@ button.disabled:hover{
     color: white;
     top: 60px;
     z-index: 2;
-    margin-left:5%;
-    margin-right: 5%;
-    width: 90%;
+    margin-left:20%;
+    margin-right: 20%;
+    width: 60%;
     height: 80%;
     border: white 1px solid;
     border-radius: 5px;
     padding: 5%;
+    text-align: center;
+}
+.login-form, .signup-form{
+   display: inline-block;
+   text-align: left;
+}
+.error{
+    font-size: 10px;
+    color: red;
 }
 .message-container{
     color: white;
@@ -217,8 +238,40 @@ textarea#description{
     margin-right: 20px;
 }
 
+/* Tooltip container */
+.tooltip {
+    position: relative;
+    display: block;
+  }
+  
+  /* Tooltip text */
+  .tooltip .tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: transparent;
+    color: white;
+    padding: 5px 40px;
+   
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+  }
+  
+  /* Show the tooltip text when you mouse over the tooltip container */
+  .tooltip:hover .tooltip-text {
+    cursor: pointer;
+    visibility: visible;
+  }
+  
+
 @media only screen and (max-width: 500px) {
     .display {
         width: 85%;
+    }
+    .form-display {
+        height: 45%;
+        width: 90%;
+        margin-left: 5%;
+        margin-right: 5%;    
     }
 }
