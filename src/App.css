@@ -143,6 +143,27 @@ button.disabled:hover{
     border-radius: 5px;
     padding: 5%;
 }
+.message-container{
+    color: white;
+    position: absolute;
+    top: 30px;
+    transition: opacity 2s linear;
+    width: 50%;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    z-index: 2;
+    font-size: 10px;
+    text-align: center;
+}
+.message.visible{
+    opacity: 1;
+    transition: .7s linear;
+}
+.message.hidden{
+    opacity: 0;
+    transition: .7s linear;
+}
 .display{
     color: white;
     border: solid white 1px;

@@ -17,6 +17,7 @@ import Display from './Display'
 import {Route} from 'react-router-dom'
 import LoginForm from './LoginForm'
 import SignupForm from './SignupForm'
+import MessageDisplay from './MessageDisplay'
 
 
 Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5ZWI5Mzc5NS1iZjNmLTQ0OTEtYTNjOS0xYWY1MTBmNGE0YjAiLCJpZCI6MTg4MzcsInNjb3BlcyI6WyJhc2wiLCJhc3IiLCJhc3ciLCJnYyJdLCJpYXQiOjE1NzQ4MTM3MDJ9.q8-BHVsogGtuJUBMi5K8V-h9frZOQWsZGJwf-CuyDCY'
@@ -46,9 +47,7 @@ class Map extends React.Component {
     
         return entities.map((entity, index) => {
             const isSelected = (this.context.selected === index || !entity.saved) && this.context.mode === 'select'
-            const pixelSize = isSelected ? 16 : 14
-            const width = isSelected ? 6 : 4
-            const outlineWidth = isSelected ? 2 : 0
+            entity.isSelected = isSelected
 
             let color = Color.DODGERBLUE
             if (!entity.saved) {
@@ -57,43 +56,81 @@ class Map extends React.Component {
             else if (this.context.user && (this.context.user.user_name === entity.user_name)) {
                 color = Color.CORNFLOWERBLUE
             }
+            entity.color = color
 
             if (entity.type === 'waypoint'){
-                return (
-                    <Entity 
-                        key={entity.id}
-                        id={entity.id}
-                        position={entity.position}
-                        point={{
-                            pixelSize,
-                            color,
-                            outlineColor: Color.WHITE,
-                            outlineWidth,
-                            disableDepthTestDistance: Number.POSITIVE_INFINITY
-                        }}
-                    />
-                )
+                return this.drawWaypoint(entity)
             }
             else {
-                return (
-                    <Entity
-                        key={entity.id}
-                        id={entity.id}
-                        position={entity.position[0]}
-                        polyline={new PolylineGraphics({
-                            positions: entity.position,
-                            width,
-                            clampToGround: true,
-                            material: new PolylineOutlineMaterialProperty({
-                                color,
-                                outlineColor: Color.WHITE,
-                                outlineWidth: outlineWidth
-                            }),
-                        })}
-                    />
-                )
+                return this.drawRoute(entity)
             }
         })
+    }
+
+    drawWaypoint(waypoint){
+        const pixelSize = waypoint.isSelected ? 16 : 14
+        const outlineWidth = waypoint.isSelected ? 2 : 0
+
+        return (
+            <Entity 
+                key={waypoint.id}
+                id={waypoint.id}
+                position={waypoint.position}
+                point={{
+                    pixelSize,
+                    color: waypoint.color,
+                    outlineColor: Color.WHITE,
+                    outlineWidth,
+                    disableDepthTestDistance: Number.POSITIVE_INFINITY
+                }}
+            />
+        )
+    }
+
+    drawRoute(route){
+        const pixelSize = route.isSelected ? 12 : 10
+        const width = route.isSelected ? 6 : 4
+        const outlineWidth = route.isSelected ? 2 : 0
+
+        let joints = [];
+        for (let i = 0; i < route.position.length; i++){
+            joints.push(
+                <Entity
+                    key={`r${route.id}j${i}`}
+                    id={`r${route.id}j${i}`}
+                    isEndpoint={(i === 0 || i === route.position.length-1)}
+                    position={route.position[i]}
+                    point={{
+                        pixelSize,
+                        color: route.color,
+                        disableDepthTestDistance: Number.POSITIVE_INFINITY
+                    }}
+                />
+            )
+        }
+        return (
+            <div className='route'>
+                <Entity
+                    key={route.id}
+                    id={route.id}
+                    position={route.position[0]}
+                    polyline={new PolylineGraphics({
+                        positions: route.position,
+                        width,
+                        clampToGround: true,
+                        material: new PolylineOutlineMaterialProperty({
+                            color: route.color,
+                            outlineColor: Color.WHITE,
+                            outlineWidth: outlineWidth
+                        }),
+                    })}
+                />
+                <div className={'route-joints'}>
+                    {joints}
+                </div>
+            </div>
+            
+        )
     }
 
     logCameraPosition(){
@@ -107,7 +144,6 @@ class Map extends React.Component {
         const pickedObject = this.viewer.scene.pick(mousePosition)
         if (pickedObject){
             this.context.methods.selectEntity(pickedObject.id.id)
-            this.viewer.scene.requestRender()
         }
         else if (this.context.mode === 'add point'){
             this.getClickPosition(mousePosition, this.viewer.scene)
@@ -116,17 +152,18 @@ class Map extends React.Component {
                 })
                 .catch(error => console.log(error))
         }
-        else if (this.context.mode === 'add route'){
+        else if (this.context.mode === 'add route' || this.context.mode === 'create route'){
             this.getClickPosition(mousePosition, this.viewer.scene)
                 .then(position => {
                     this.context.methods.dropRouteJoint(position)
-                    this.context.methods.setMode('edit')
                 })
                 .catch(error => console.log(error))
         }
         else {
+            this.context.methods.cancelEdit()
             this.context.methods.setMode('')
         }
+        this.viewer.scene.requestRender()
     }
     async getClickPosition(mousePosition, scene){
         let cartesian = scene.pickPosition(mousePosition)
@@ -155,7 +192,8 @@ class Map extends React.Component {
     }
     render() {
         const entities = this.drawEntities();
-        const display = this.context.mode ? <Display requestRender={() => this.requestRender()}/> : ''
+        const display = ['edit', 'create', 'create route', 'select'].some(item => item === this.context.mode) ? <Display requestRender={() => this.requestRender()}/> : ''
+        const message = <MessageDisplay hidden={this.context.message.hidden} text={this.context.message.text}/>
 
         return (
             <div className='map-container'>
@@ -177,6 +215,7 @@ class Map extends React.Component {
                     maximumRenderTimeChange= {Infinity}
                     scene3DOnly={true}>
                     <Globe depthTestAgainstTerrain={true}>
+                        {message}
                         {entities}
                         {display}
                         <ScreenSpaceEventHandler>

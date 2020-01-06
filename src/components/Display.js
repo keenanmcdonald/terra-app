@@ -9,14 +9,11 @@ class Display extends React.Component{
     render(){
         const selected = this.context.entities[this.context.selected] ? this.context.entities[this.context.selected] : {name: '', description: ''}
         let content;
-        if(this.context.mode === 'create' || this.context.mode === 'edit'){
+        if(['edit', 'create', 'create route'].some(item => item === this.context.mode)){
             content = <EditEntityForm name={selected.name} description={selected.description} requestRender={this.props.requestRender}/>
         }
         else if (this.context.mode === 'select'){
             content = <EntityInfo name={selected.name} description={selected.description} user_name={selected.user_name} requestRender={this.props.requestRender}/>
-        }
-        else{
-            content = ''
         }
         return(
             <div className='display-container'>

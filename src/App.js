@@ -17,6 +17,7 @@ class App extends React.Component{
       loadForeignEntities: false,
       mode: '',
       user: undefined,
+      message: {text: '', hidden: true, timeoutId: undefined},
     }
 
     this.loadEntities = this.loadEntities.bind(this)
@@ -29,6 +30,7 @@ class App extends React.Component{
     this.deleteEntity = this.deleteEntity.bind(this)
     this.saveSelected = this.saveSelected.bind(this)
     this.cancelEdit = this.cancelEdit.bind(this)
+    this.displayMessage = this.displayMessage.bind(this)
     this.logout = this.logout.bind(this)
     this.login = this.login.bind(this)
   }
@@ -184,17 +186,23 @@ class App extends React.Component{
   }
 
   dropRouteJoint(position){
-    let route = this.state.entities[this.state.selected]
-    if (!route){
-      let newRoute = {position: [position], name: '', description: '', type: 'route'}
-      this.uploadEntity(newRoute)
-    }
-    else if (this.state.mode === 'edit'){
+    //checks the current mode to see if the route already exists or needs to be created
+    if (this.state.mode === 'create route'){
+      this.displayMessage('Click on the map again to draw a line between points', 4000)
+      let entities = this.state.entities
+      let route = entities[this.state.selected]
       route.position.push(position)
-      this.updateSelected(route)
+      entities.splice(this.state.selected, 1)
+      entities.push(route)
+      this.setState({entities, selected: entities.length-1})
     }
-    else{
-      this.setState({selected: -1, mode: ''})
+    else {
+      this.displayMessage('Click on the map again to draw a line between points', 4000)
+      let route = {position: [position], name: '', description: '', type: 'route', user_name: this.state.user.user_name, saved: false, id: -1}
+      let entities = this.state.entities
+      entities.push(route)
+      this.setState({entities, selected: entities.length-1})
+      this.setMode('create route')
     }
   }
 
@@ -242,8 +250,9 @@ class App extends React.Component{
     this.setState({entities})
   }
 
+  //called when the cancel button is pressed while adding or editing an entity if the selected entity is unsaved, removes it from the state, if it is saved, it simply switches the mode back from 'edit' to 'select'
   cancelEdit(){
-    if (!this.state.entities[this.state.selected].saved){
+    if (this.state.entities[this.state.selected] && !this.state.entities[this.state.selected].saved){
       let entities = this.state.entities
       entities.splice(this.state.selected, 1)
       this.setState({entities})
@@ -252,6 +261,36 @@ class App extends React.Component{
       this.setMode('select')
     }
   }
+
+  async displayMessage(text, timeout){
+    //clear all current timeouts to start fresh
+    clearTimeout(this.state.message.timeoutId)
+    this.setState({message: {...this.state.message, hidden: true}})
+    //fade in
+    setTimeout(function(){
+      this.setState({message: {...this.state.message, text, hidden: false}})
+    }.bind(this), 10)
+
+    if (timeout){
+      //fade out
+      const timeoutId = setTimeout(function(){
+          this.setState({message: {...this.state.message, hidden: true}})
+        }.bind(this), timeout)
+      this.setState({message: {...this.state.message, timeoutId}})
+    }
+  }
+
+/* not sure if I need this...
+  clearUnsavedEntities(){
+    let entities = this.state.entities
+    let savedEntities = []
+    for (const entity of entities){
+      if (entity.saved){
+        savedEntities.push(entity)
+      }
+    }
+    this.setState({savedEntities})
+  }*/
 
   //takes user object as an argument, loads user to the state, and calls loadEntities
   login(user){
@@ -278,6 +317,7 @@ class App extends React.Component{
         deleteEntity: this.deleteEntity,
         saveSelected: this.saveSelected,
         cancelEdit: this.cancelEdit,
+        displayMessage: this.displayMessage,
         logout: this.logout,
         login: this.login,
       }
