@@ -5,6 +5,15 @@ import TerraContext from '../TerraContext'
 class Toolbar extends React.Component{
     static contextType = TerraContext
 
+    handleToolClick(mode, message){
+        if (this.context.mode === mode){
+            this.context.methods.setMode('')
+        }
+        else{
+            this.context.methods.setMode(mode, message)
+        }
+    }
+
     render(){
         const toolsEnabled = (this.context.user && ['add point', 'add route', 'select',''].some(item => item === this.context.mode))
         const loadForeignEntitiesEnabled = (this.context.user)
@@ -14,17 +23,15 @@ class Toolbar extends React.Component{
                 <ToolbarButton 
                     name='Add Waypoint' 
                     enabled={toolsEnabled} 
-                    selected={this.context.mode === 'add point'} 
-                    clickFunction={()=>this.context.methods.setMode('add point')}
-                    messageOnClick='Click on the map to create a waypoint'
+                    selected={this.context.mode === 'add point'}
+                    clickFunction={()=>this.handleToolClick('add point', 'Click on the map to create a waypoint')}
                     iconUrl='./waypoint.png'
                 />
                 <ToolbarButton
                     name='Add Route'
                     enabled={toolsEnabled}
                     selected={this.context.mode === 'add route'}
-                    clickFunction={()=>this.context.methods.setMode('add route')}
-                    messageOnClick='Click on the map to begin drawing a route'
+                    clickFunction={()=>this.handleToolClick('add route', 'Click on the map to begin drawing a route')}
                     iconUrl='./route.png'
 
                 />

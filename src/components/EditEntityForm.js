@@ -26,6 +26,9 @@ class EditEntityForm extends React.Component{
         this.props.requestRender()
     }
     render(){
+        const currentEntity = this.context.entities[this.context.selected]
+        const allowAdd = (this.state.name && !(currentEntity.type === 'route' && currentEntity.position.length < 2))
+
         return (
             <form className='edit-entity-form'>
                 <div>
@@ -37,7 +40,7 @@ class EditEntityForm extends React.Component{
                     <textarea name='description' id='description' type='text' rows='5' defaultValue={this.props.description} onChange={e => this.updateDescription(e.target.value)}/>
                 </div>
                 <div>
-                    <button id='submit' className={this.state.name ? '' : 'disabled'} type='submit' onClick={e => this.context.methods.saveSelected(e, this.state.name, this.state.description)} disabled={!this.state.name}>
+                    <button id='submit' className={allowAdd ? '' : 'disabled'} type='submit' onClick={e => this.context.methods.saveSelected(e, this.state.name, this.state.description)} disabled={!this.state.name}>
                         Add
                     </button>
                     <button id='cancel' type='button' onClick={() => this.handleCancel()}>

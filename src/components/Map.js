@@ -151,18 +151,7 @@ class Map extends React.Component {
         //this.logCameraPosition()
         const mousePosition = event.position
         const pickedObject = this.viewer.scene.pick(mousePosition)
-        console.log(pickedObject)
-        if (pickedObject){
-            let id;
-            if (pickedObject.id.type === 'joint'){
-                id = parseInt(pickedObject.id.id.split(/[a-zA-Z]/)[1])
-            }
-            else{
-                id = pickedObject.id.id
-            }
-            this.context.methods.selectEntity(id)
-        }
-        else if (this.context.mode === 'add point'){
+        if (this.context.mode === 'add point'){
             this.getClickPosition(mousePosition, this.viewer.scene)
                 .then(position => {
                     this.context.methods.dropWaypoint(position)
@@ -175,6 +164,16 @@ class Map extends React.Component {
                     this.context.methods.dropRouteJoint(position)
                 })
                 .catch(error => console.log(error))
+        }
+        else if (pickedObject && !(this.context.mode === 'create point')){
+            let id;
+            if (pickedObject.id.type === 'joint'){
+                id = parseInt(pickedObject.id.id.split(/[a-zA-Z]/)[1])
+            }
+            else{
+                id = pickedObject.id.id
+            }
+            this.context.methods.selectEntity(id)
         }
         else {
             this.context.methods.cancelEdit()
@@ -209,7 +208,7 @@ class Map extends React.Component {
     }
     render() {
         const entities = this.drawEntities();
-        const display = ['edit', 'create', 'create route', 'select'].some(item => item === this.context.mode) ? <Display requestRender={() => this.requestRender()}/> : ''
+        const display = ['edit', 'create point', 'create route', 'select'].some(item => item === this.context.mode) ? <Display requestRender={() => this.requestRender()}/> : ''
         const message = <MessageDisplay hidden={this.context.message.hidden} text={this.context.message.text}/>
 
         return (

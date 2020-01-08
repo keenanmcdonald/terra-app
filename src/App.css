@@ -40,7 +40,7 @@ header {
     width: 100%;
     z-index: 1;
     color: white;
-    height: 47px;
+    height: 54px;
 }
 h1 {
     position: absolute;
@@ -138,18 +138,18 @@ button.disabled img {
 }
 .toolbar{
     position: absolute;
-    top: 62px;
+    top: 61px;
     left: 21px;
 }
 .form-display{
     position: absolute;
     background-image: linear-gradient(rgba(0, 0, 0, .95), rgba(20, 20 ,20, .5));
     color: white;
-    top: 60px;
+    top: 66px;
     z-index: 2;
-    margin-left:20%;
-    margin-right: 20%;
-    width: 60%;
+    margin-left:25%;
+    margin-right: 25%;
+    width: 50%;
     height: 80%;
     border: white 1px solid;
     border-radius: 5px;
@@ -167,14 +167,14 @@ button.disabled img {
 .message-container{
     color: white;
     position: absolute;
-    top: 30px;
+    top: 34px;
     transition: opacity 2s linear;
-    width: 50%;
+    width: 80%;
     left: 0;
     right: 0;
     margin: 0 auto;
     z-index: 2;
-    font-size: 10px;
+    font-size: 12px;
     text-align: center;
 }
 .message.visible{
@@ -228,11 +228,27 @@ textarea#description{
     resize: none;
 
 }
+.toolbar-button{
+    height: 32px;
+    width: 32px;
+    padding-top: 5px;
+}
 .cesium-viewer-toolbar{
     margin-top: 60px;
 }
+.cesium-geocoder-input{
+    border-radius: 4px !important; 
+    height: 32px !important;
+    border: solid 1px white !important;
+    padding-right: 30px !important;
+    background-color: rgba(20, 20, 20, .7) !important;
+}
 .cesium-geocoder-searchButton{
     background-color: transparent;
+    height: 20px !important;
+    margin-top: 4px;
+    border-radius: 4px !important;
+    background-color: transparent !important;
 }
 .cesium-viewer-geocoderContainer{
     margin-right: 20px;
@@ -247,10 +263,11 @@ textarea#description{
   /* Tooltip text */
   .tooltip .tooltip-text {
     visibility: hidden;
-    width: 200px;
+    width: 300px;
     background-color: transparent;
     color: white;
     padding: 5px 40px;
+    font-size: 12px;
    
     /* Position the tooltip text - see examples below! */
     position: absolute;
@@ -267,11 +284,16 @@ textarea#description{
 @media only screen and (max-width: 500px) {
     .display {
         width: 85%;
+        bottom: 34px;
     }
     .form-display {
         height: 45%;
         width: 90%;
         margin-left: 5%;
         margin-right: 5%;    
+    }
+    .message-container{
+        font-size: 10px;
+        top: 38px;
     }
 }

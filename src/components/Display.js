@@ -9,7 +9,7 @@ class Display extends React.Component{
     render(){
         const selected = this.context.entities[this.context.selected] ? this.context.entities[this.context.selected] : {name: '', description: ''}
         let content;
-        if(['edit', 'create', 'create route'].some(item => item === this.context.mode)){
+        if(['edit', 'create point', 'create route'].some(item => item === this.context.mode)){
             content = <EditEntityForm name={selected.name} description={selected.description} requestRender={this.props.requestRender}/>
         }
         else if (this.context.mode === 'select'){

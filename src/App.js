@@ -98,8 +98,11 @@ class App extends React.Component{
     })
   }
 
-  setMode(mode){
+  setMode(mode, message){
     this.setState({mode})
+    if (message){
+      this.displayMessage(message, 3000)
+    }
   }
 
   //checks 'loadForeignEntities' and loads either the current users entities or all users entities into the state
@@ -182,7 +185,7 @@ class App extends React.Component{
     let entities = this.state.entities
     entities.push(waypoint)
     this.setState({entities, selected: entities.length-1})
-    this.setMode('create')
+    this.setMode('create point')
   }
 
   dropRouteJoint(position){
@@ -226,7 +229,7 @@ class App extends React.Component{
     }
     this.uploadEntity(entity)
 
-    const mode = this.state.mode === 'create' ? '' : 'select'
+    const mode = this.state.mode === 'select'
     this.setMode(mode)
   }
 
@@ -299,7 +302,14 @@ class App extends React.Component{
   }
 
   logout(){
-    this.setState({user: undefined})
+    this.setState({
+      entities:[],
+      selected: -1,
+      loadForeignEntities: false,
+      mode: '',
+      user: undefined,
+      message: {text: '', hidden: true, timeoutId: undefined},
+    })
     window.localStorage.removeItem(config.TOKEN_KEY)
   }
 
