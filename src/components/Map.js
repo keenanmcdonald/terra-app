@@ -37,16 +37,12 @@ class Map extends React.Component {
     }
 
     drawEntities(){
-        /*
-        if (this.context.loadEntities){
-            this.context.methods.loadEntities()
-        }*/
         this.requestRender()
 
         let entities = this.context.entities
     
         return entities.map((entity, index) => {
-            const isSelected = (this.context.selected === index || !entity.saved) && this.context.mode === 'select'
+            const isSelected = (this.context.selected === index || !entity.saved) && (this.context.mode === 'select' || this.context.mode === 'edit')
             entity.isSelected = isSelected
             let outlineColor = isSelected ? Color.WHITE : Color.GREY
 
@@ -152,32 +148,45 @@ class Map extends React.Component {
         const mousePosition = event.position
         const pickedObject = this.viewer.scene.pick(mousePosition)
         if (this.context.mode === 'add point'){
-            this.getClickPosition(mousePosition, this.viewer.scene)
+            if (pickedObject){
+                console.log(pickedObject.id.position._value)
+                this.context.methods.dropWaypoint(pickedObject.id.position._value)
+            }
+            else{
+                this.getClickPosition(mousePosition, this.viewer.scene)
                 .then(position => {
                     this.context.methods.dropWaypoint(position)
                 })
                 .catch(error => console.log(error))
+            }
         }
-        else if (this.context.mode === 'add route' || this.context.mode === 'create route'){
-            this.getClickPosition(mousePosition, this.viewer.scene)
+        else if (this.context.mode === 'create route' || this.context.mode === 'add route'){
+            if (pickedObject && (pickedObject.id.type === 'point' || pickedObject.id.type === 'joint')){
+                this.context.methods.dropRouteJoint(pickedObject.id.position)
+            }
+            else{
+                this.getClickPosition(mousePosition, this.viewer.scene)
                 .then(position => {
                     this.context.methods.dropRouteJoint(position)
                 })
                 .catch(error => console.log(error))
-        }
-        else if (pickedObject && !(this.context.mode === 'create point')){
-            let id;
-            if (pickedObject.id.type === 'joint'){
-                id = parseInt(pickedObject.id.id.split(/[a-zA-Z]/)[1])
             }
-            else{
-                id = pickedObject.id.id
-            }
-            this.context.methods.selectEntity(id)
         }
         else {
-            this.context.methods.cancelEdit()
-            this.context.methods.setMode('')
+            if (pickedObject){
+                let id;
+                if (pickedObject.id.type === 'joint'){
+                    id = parseInt(pickedObject.id.id.split(/[a-zA-Z]/)[1])
+                }
+                else{
+                    id = pickedObject.id.id
+                }
+                this.context.methods.selectEntity(id)
+                }
+            else {
+                this.context.methods.cancelEdit()
+                this.context.methods.setMode('')
+            }
         }
         this.viewer.scene.requestRender()
     }

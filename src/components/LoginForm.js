@@ -3,6 +3,10 @@ import config from '../config'
 import AuthApiService from '../services/auth-api-service'
 import TerraContext from '../TerraContext'
 
+// eslint-disable-next-line
+const REGEX_EMAIL_VALIDATION = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
+
 class LoginForm extends React.Component{
     static contextType = TerraContext
 
@@ -31,6 +35,20 @@ class LoginForm extends React.Component{
     updateStaySignedIn(staySignedIn){
         this.setState({staySignedIn})
     }
+    
+    validateEmail(){
+        const email = this.state.email.value
+        // eslint-disable-next-line
+        if (!(REGEX_EMAIL_VALIDATION.test(email))){
+            return 'must enter valid email'
+        }
+    }
+    validatePassword(){
+        const password = this.state.password.value
+        if (password.length < 8){
+            return 'password must be at least 8 characters long'
+        }
+    }
 
     submitForm(e){
         e.preventDefault()
@@ -42,21 +60,19 @@ class LoginForm extends React.Component{
 
         AuthApiService.postLogin(credentials)
             .then(res => {
-                console.log('uncaught: ' + res)
                 this.setState({error: ''})
                 window.localStorage.setItem(config.TOKEN_KEY, res.authToken)
                 if(this.state.staySignedIn){
                     let expiryDate = new Date()
                     expiryDate.setMonth(expiryDate.getMonth() + 1)
-                    document.cookie = `user=${res.user}; expires=${expiryDate}`
                     document.cookie = `authToken=${res.authToken}; expires=${expiryDate}`
                 }
                 this.context.methods.login(res.user)
                 this.props.history.push('/')
             })
             .catch(res => {
-                console.log(res)
-                //put error message in state
+                this.setState({error: 'something went wrong, check that username and password is correct and please try again'})
+                //extract error message from server and send to user?
             })
         
     }
@@ -74,7 +90,16 @@ class LoginForm extends React.Component{
                     <input name='staySignedIn' id='staySignedIn' type='checkbox' onChange={e => this.updateStaySignedIn(e.target.value)}/>
                     <label htmlFor='staySignedIn' className='stay-signed-in'>Stay signed in</label>
                     <button id='submit' type='submit' 
+                        className={
+                            (this.validateEmail() || 
+                            this.validatePassword())
+                            && 'disabled'
+                        }
                         onClick={e => this.submitForm(e)} 
+                        disabled={
+                            this.validateEmail() || 
+                            this.validatePassword()
+                        }
                     >
                         Login
                     </button>

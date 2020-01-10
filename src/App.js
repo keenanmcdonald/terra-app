@@ -38,7 +38,7 @@ class App extends React.Component{
 
   getCookieByName(name) 
     {
-      var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
+      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
       if (match) {
         return match[2]
       }
@@ -49,25 +49,31 @@ class App extends React.Component{
 
   //will check to see if there is a login token saved in the user's cookies and log in the user if there is
   componentDidMount(){
-    /*
+
     const authToken = this.getCookieByName('authToken')
-    const user = this.getCookieByName('user')
-    console.log(user)
-    this.login(user)
-    
-    if (document.cookie.authToken){
-      fetch(`${config.API_ENDPOINT}auth/verify-token`,  {       
+    console.log(authToken)
+    console.log(JSON.stringify({authToken: authToken}))
+    if (authToken){
+      fetch(`${config.API_ENDPOINT}auth/verify_token`,  {       
         method: 'POST',
         headers: {
             'content-type': 'application/json',  
         },
-        body: JSON.stringify(authToken),
+        body: JSON.stringify({authToken: authToken}),
       })
         .then(res => {
-          console.log(res)
-          this.login(user)
+          if (!res.ok){
+            throw new Error(res.error)
+          }
+          res.json()
+            .then(user => {
+              this.login(user)
+            })
         })
-    }*/
+        .catch(error => {
+          console.log(error)
+        })
+    }
   }
 
   //takes entity data as it is provided from the server and converts position data to the proper Cesium objects
@@ -93,6 +99,9 @@ class App extends React.Component{
   }
 
   toggleLoadForeignEntities(){
+    if (this.state.loadForeignEntities && this.state.mode === 'select'){
+      this.setMode('')
+    }
     this.setState({loadForeignEntities: !this.state.loadForeignEntities}, () => {
       this.loadEntities()
     })
@@ -111,7 +120,8 @@ class App extends React.Component{
       fetch(`${config.API_ENDPOINT}entities`, {
         method: 'GET',
         headers: {
-            'content-type': 'application/json',  
+            'content-type': 'application/json',
+            'authorization': `bearer ${window.localStorage.getItem(config.TOKEN_KEY)}`
         },
       })
         .then(res => {
@@ -130,7 +140,8 @@ class App extends React.Component{
       fetch(`${config.API_ENDPOINT}entities/user/${this.state.user.user_name}`, {
         method: 'GET',
         headers: {
-          'content-type': 'application/json',  
+          'content-type': 'application/json',
+          'authorization': `bearer ${window.localStorage.getItem(config.TOKEN_KEY)}`,
         },
       })
         .then(res => {
@@ -169,7 +180,8 @@ class App extends React.Component{
     fetch(`${config.API_ENDPOINT}entities`, {
         method: 'POST',
         headers: {
-            'content-type': 'application/json',  
+            'content-type': 'application/json',
+            'authorization': `bearer ${window.localStorage.getItem(config.TOKEN_KEY)}`,
         },
         body: JSON.stringify(dbEntity),
     })
@@ -229,8 +241,7 @@ class App extends React.Component{
     }
     this.uploadEntity(entity)
 
-    const mode = this.state.mode === 'select'
-    this.setMode(mode)
+    this.setMode('select')
   }
 
   deleteEntity(index){
@@ -240,7 +251,8 @@ class App extends React.Component{
       fetch(`${config.API_ENDPOINT}entities/${entities[index].id}`, {
         method: 'DELETE',
         headers: {
-            'content-type': 'application/json',  
+            'content-type': 'application/json',
+            'authorization': `bearer ${window.localStorage.getItem(config.TOKEN_KEY)}`,
         },
       })
         .then(res => {
@@ -311,6 +323,7 @@ class App extends React.Component{
       message: {text: '', hidden: true, timeoutId: undefined},
     })
     window.localStorage.removeItem(config.TOKEN_KEY)
+    document.cookie = "authToken= ; expires = Thu, 01 Jan 1992 00:00:00 GMT"
   }
 
   render(){

@@ -123,6 +123,12 @@ button.disabled{
 button.disabled img {
     filter: brightness(30%);
 }
+button.disabled:hover{
+    background-color: transparent;
+}
+button.disabled.toolbar-button:hover{
+    background-color: rgba(20, 20 ,20, .7);
+}
 .display-buttons button{
     display: inline-block
 }
@@ -160,9 +166,13 @@ button.disabled img {
    display: inline-block;
    text-align: left;
 }
+.validation-error{
+    width: 130px;
+}
 .error{
     font-size: 10px;
     color: red;
+    width: 130px;
 }
 .message-container{
     color: white;
@@ -209,6 +219,7 @@ button.disabled img {
 }
 .display textarea#description{
     width: 90%;
+    height: 50px;
 }
 .edit-entity-form{
     display: flex;

@@ -12,7 +12,8 @@ const AuthApiService = {
         })
             .then(res => {
                 if (!res.ok){
-                    throw new Error(res.error)
+                    console.log(res)
+                    throw new Error(res.json())
                 }
                 return res.json()
             })

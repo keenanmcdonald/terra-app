@@ -4,6 +4,8 @@ import AuthApiService from '../services/auth-api-service'
 import TerraContext from '../TerraContext'
 
 const REGEX_UPPER_LOWER_NUMBER = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[\S]+/
+// eslint-disable-next-line
+const REGEX_EMAIL_VALIDATION = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
 class SignupForm extends React.Component{
     static contextType = TerraContext
@@ -26,7 +28,8 @@ class SignupForm extends React.Component{
             repeatPassword: {
                 value: '',
                 touched: false,
-            }
+            },
+            error: '',
         }
     }
 
@@ -45,8 +48,7 @@ class SignupForm extends React.Component{
 
     validateEmail(){
         const email = this.state.email.value
-        // eslint-disable-next-line
-        if (!(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email))){
+        if (!(REGEX_EMAIL_VALIDATION.test(email))){
             return 'must enter valid email'
         }
     }
@@ -99,7 +101,9 @@ class SignupForm extends React.Component{
 
         AuthApiService.postUser(user)
             .then(res => {
-                console.log(res)
+                if (!res.ok){
+                    throw new Error(res.error )
+                }
                 AuthApiService.postLogin({email: user.email, password: user.password})
                     .then(res => {
                         window.localStorage.setItem(config.TOKEN_KEY, res.authToken)
@@ -107,10 +111,14 @@ class SignupForm extends React.Component{
                         this.props.history.push('/')
                     })
                     .catch(res => {
+                        this.setState({error: 'an error has occured, please try again later'})
                         console.log(res.error)
                     })
                 })
-            .catch(res => console.log(res.error))
+            .catch(res => {
+                this.setState({error: 'something went wrong, that email or username may already exist'})
+                console.log(res.error)
+            })
     }
     render(){
         return (
@@ -119,20 +127,16 @@ class SignupForm extends React.Component{
                     <h3>Sign Up</h3>
                     <label htmlFor='email'>Email: </label>
                     <input name='email' id='email' type='text' onChange={e => this.updateEmail(e.target.value)}/>
-                    {this.state.email.touched && (<span className='validation-error error'>{this.validateEmail()}</span>)}
-                    <br/>
+                    {this.state.email.touched && this.validateEmail() ? (<p className='validation-error error'>{this.validateEmail()}</p>) : ''}
                     <label htmlFor='username'>Username: </label>
                     <input name='username' id='username' type='text' onChange={e => this.updateUsername(e.target.value)}/>
-                    {this.state.username.touched && (<span className='validation-error error'>{this.validateUsername()}</span>)}
-                    <br/>
+                    {this.state.username.touched && this.validateUsername() ? (<p className='validation-error error'>{this.validateUsername()}</p>) : ''}
                     <label htmlFor='password'>Password: </label>
                     <input name='password' id='password' type='password' onChange={e => this.updatePassword(e.target.value)}/>
-                    {this.state.password.touched && (<span className='validation-error error'>{this.validatePassword()}</span>)}
-                    <br/>
+                    {this.state.password.touched && this.validatePassword() ? (<p className='validation-error error'>{this.validatePassword()}</p>) : ''}
                     <label htmlFor='repeatPassword'>Repeat Password: </label>
                     <input name='repeatPassword' id='repeatPassword' type='password' onChange={e => this.updateRepeatPassword(e.target.value)}/>
-                    {this.state.repeatPassword.touched && (<span className='validation-error error'>{this.validateRepeatPassword()}</span>)}
-                    <br/>
+                    {this.state.repeatPassword.touched && this.validateRepeatPassword() ? (<p className='validation-error error'>{this.validateRepeatPassword()}</p>) : ''}
                     <button id='submit' type='submit' 
                         className={
                             (this.validateEmail() || 
@@ -151,6 +155,7 @@ class SignupForm extends React.Component{
                     >
                         Sign up
                     </button>
+                    <p className='error'>{this.state.error}</p> 
                 </form> 
             </div>
         )
