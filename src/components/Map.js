@@ -18,6 +18,7 @@ import {Route} from 'react-router-dom'
 import LoginForm from './LoginForm'
 import SignupForm from './SignupForm'
 import MessageDisplay from './MessageDisplay'
+import LandingPage from './LandingPage'
 
 
 Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5ZWI5Mzc5NS1iZjNmLTQ0OTEtYTNjOS0xYWY1MTBmNGE0YjAiLCJpZCI6MTg4MzcsInNjb3BlcyI6WyJhc2wiLCJhc3IiLCJhc3ciLCJnYyJdLCJpYXQiOjE1NzQ4MTM3MDJ9.q8-BHVsogGtuJUBMi5K8V-h9frZOQWsZGJwf-CuyDCY'
@@ -248,6 +249,7 @@ class Map extends React.Component {
                             <ScreenSpaceEvent action={e => this.handleClick(e)} type={ScreenSpaceEventType.LEFT_CLICK} />
                             <ScreenSpaceEvent action={e => this.handleHover(e)} type={ScreenSpaceEventType.MOUSE_MOVE}/>
                         </ScreenSpaceEventHandler>
+                        <Route path='/welcome' component={LandingPage}/>
                         <Route path='/login' component={LoginForm}/>
                         <Route path='/signup' component={SignupForm}/>
                     </Globe>

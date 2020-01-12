@@ -34,21 +34,24 @@ header {
     position: absolute;
     display: flex;
     justify-content: space-between;
-    background-color: rgba(20, 20 ,20, .7);
-    border-bottom: 1px black solid;
+    background-color: rgba(20, 20 ,20, .6);
+    border: 1px rgba(20, 20 ,20, .6) solid;
     padding: 0px 20px;
     width: 100%;
     z-index: 1;
     color: white;
     height: 54px;
+    backdrop-filter: blur(5px);
 }
 h1 {
-    position: absolute;
-    top: 10px;
-    margin-left: 42px;
-    display: inline-block;
     font-family: 'Montserrat', sans-serif;
     font-size: 24px;
+}
+.header-title h1 {
+    position: absolute;
+    display: inline-block;
+    margin-left: 42px;
+    top: 10px;
 }
 h2{
     font-family: 'Montserrat', sans-serif;
@@ -62,6 +65,31 @@ h3{
     font-size: 24px;
     margin-bottom: 20px;
 }
+h4{
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 10px;
+}
+h5{
+    font-weight: 600;
+    margin-top: 4px;
+}
+.landing-page span{
+    font-weight: 900;
+}
+.landing-page h1{
+    margin-bottom: 8px;
+}
+.landing-page>p{
+    margin-top: 4px;
+}
+.landing-page-buttons{
+    margin-top: 10px;
+}
+.landing-page-buttons button{
+    display: inline-block;
+}
+
 button{
     border: solid white 1px;
     color: white;
@@ -77,7 +105,8 @@ button.load-entities{
     margin-top: 30px;
 }
 .toolbar button{
-    background-color: rgba(20, 20 ,20, .7)
+    background-color: rgba(20, 20 ,20, .6);
+    backdrop-filter: blur(5px);
 }
 label {
     display: block;
@@ -91,6 +120,9 @@ input, textarea {
     border: solid rgba(255, 255, 255, .8) 1px;
     border-radius: 5px;
     color: white;
+}
+.tooltip:hover button{
+    background-color: rgba(100, 149, 237, .3)
 }
 button:hover{
     background-color: rgba(100, 149, 237, .3)
@@ -108,7 +140,18 @@ button:hover{
     position: absolute;
     top: 3px;
 }
-
+.page-backdrop{
+    position: absolute;
+    top: 54px;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(20, 20 ,20, .6);
+    backdrop-filter: blur(5px);
+    padding: 5% 5%;
+    color: white;
+    text-align: center;
+}
 .icon{
     height: 18px;
     width: 18px;
@@ -127,7 +170,7 @@ button.disabled:hover{
     background-color: transparent;
 }
 button.disabled.toolbar-button:hover{
-    background-color: rgba(20, 20 ,20, .7);
+    background-color: rgba(20, 20 ,20, .6);
 }
 .display-buttons button{
     display: inline-block
@@ -136,7 +179,7 @@ button.disabled.toolbar-button:hover{
     display: flex;
     margin-top: 10px;
 }
-.title {
+.header-title {
     cursor: pointer;
 }
 .waypoint{
@@ -146,21 +189,6 @@ button.disabled.toolbar-button:hover{
     position: absolute;
     top: 61px;
     left: 21px;
-}
-.form-display{
-    position: absolute;
-    background-image: linear-gradient(rgba(0, 0, 0, .95), rgba(20, 20 ,20, .5));
-    color: white;
-    top: 66px;
-    z-index: 2;
-    margin-left:25%;
-    margin-right: 25%;
-    width: 50%;
-    height: 80%;
-    border: white 1px solid;
-    border-radius: 5px;
-    padding: 5%;
-    text-align: center;
 }
 .login-form, .signup-form{
    display: inline-block;
@@ -199,7 +227,8 @@ button.disabled.toolbar-button:hover{
     color: white;
     border: solid white 1px;
     border-radius: 5px;
-    background-color: rgba(20, 20 ,20, .7);
+    background-color: rgba(20, 20 ,20, .6);
+    backdrop-filter: blur(5px);
     padding: 10px;
     position: absolute;
     width: 50%;
@@ -252,7 +281,8 @@ textarea#description{
     height: 32px !important;
     border: solid 1px white !important;
     padding-right: 30px !important;
-    background-color: rgba(20, 20, 20, .7) !important;
+    background-color: rgba(20, 20, 20, .6) !important;
+    backdrop-filter: blur(5px) !important;
 }
 .cesium-geocoder-searchButton{
     background-color: transparent;

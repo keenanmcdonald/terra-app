@@ -6,6 +6,8 @@ import TerraContext from './TerraContext'
 import './App.css'
 import config from './config'
 import {Cartesian3} from 'cesium'
+import {withRouter} from 'react-router-dom'
+
 
 class App extends React.Component{
   constructor(props){
@@ -49,10 +51,18 @@ class App extends React.Component{
 
   //will check to see if there is a login token saved in the user's cookies and log in the user if there is
   componentDidMount(){
+    //load landing page for new users
+    const previousVisit = (this.getCookieByName('previousVisit') === 'true')
+    if (!previousVisit){
+      this.props.history.push('/welcome')
+    }
+    let expiryDate = new Date()
+    expiryDate.setMonth(expiryDate.getYear() + 1)
+    document.cookie = `previousVisit=true; expires=${expiryDate}`
 
+
+    //keep me logged in logic
     const authToken = this.getCookieByName('authToken')
-    console.log(authToken)
-    console.log(JSON.stringify({authToken: authToken}))
     if (authToken){
       fetch(`${config.API_ENDPOINT}auth/verify_token`,  {       
         method: 'POST',
@@ -358,4 +368,4 @@ class App extends React.Component{
   }
 }
 
-export default hot(App);
+export default hot(withRouter(App));

@@ -122,7 +122,7 @@ class SignupForm extends React.Component{
     }
     render(){
         return (
-            <div className='signup-container form-display'>
+            <div className='signup-container page-backdrop'>
                 <form className='signup-form'>
                     <h3>Sign Up</h3>
                     <label htmlFor='email'>Email: </label>

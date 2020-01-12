@@ -78,7 +78,7 @@ class LoginForm extends React.Component{
     }
     render(){
         return (
-            <div className='login-container form-display'>
+            <div className='login-container page-backdrop'>
                 <form className='login-form'>
                     <h3>Log In</h3>
                     <label htmlFor='email'>Email: </label>
