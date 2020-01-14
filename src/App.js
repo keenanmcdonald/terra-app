@@ -57,7 +57,7 @@ class App extends React.Component{
       this.props.history.push('/welcome')
     }
     let expiryDate = new Date()
-    expiryDate.setMonth(expiryDate.getYear() + 1)
+    expiryDate.setMonth(expiryDate.getMonth() + 6)
     document.cookie = `previousVisit=true; expires=${expiryDate}`
 
 
@@ -266,9 +266,11 @@ class App extends React.Component{
         },
       })
         .then(res => {
-          console.log(res)
+          if (!res.ok){
+            throw new Error(res.error)
+          }
         })
-        .catch(err => console.log(err))
+        .catch(error => console.log(error))
     }
 
     entities.splice(index, 1)

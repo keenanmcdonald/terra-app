@@ -102,7 +102,7 @@ class SignupForm extends React.Component{
         AuthApiService.postUser(user)
             .then(res => {
                 if (!res.ok){
-                    throw new Error(res.error )
+                    throw new Error(res.error)
                 }
                 AuthApiService.postLogin({email: user.email, password: user.password})
                     .then(res => {
@@ -117,7 +117,6 @@ class SignupForm extends React.Component{
                 })
             .catch(res => {
                 this.setState({error: 'something went wrong, that email or username may already exist'})
-                console.log(res.error)
             })
     }
     render(){

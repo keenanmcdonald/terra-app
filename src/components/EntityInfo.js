@@ -12,6 +12,15 @@ class EntityInfo extends React.Component{
     }
 
     render(){
+        let description;
+        if (this.props.description){
+            description = (
+                <div className='description info-box'>
+                    <h6>Description:</h6>
+                    <p>{this.props.description}</p>
+                </div>
+            )
+        }
         let buttons;
         if (this.context.user && this.context.user.user_name === this.props.user_name) {
             buttons = (
@@ -22,10 +31,18 @@ class EntityInfo extends React.Component{
             )
         }
         return (
-            <div>
-                <p>Name: {this.props.name}</p> 
-                <p>Description: {this.props.description}</p>
-                <p>Created By: {this.props.user_name}</p>
+            <div className='entity-info'>
+                <div className='name-and-user'>
+                    <div className='name info-box'>
+                        <h6>Name: </h6>
+                        <p>{this.props.name}</p>
+                    </div>
+                    <div className='user info-box'>
+                        <h6>Created By:</h6>
+                        <p>{this.props.user_name}</p>
+                    </div>
+                </div>
+                {description}
                 {buttons}
             </div>
         )

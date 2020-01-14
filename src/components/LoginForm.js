@@ -103,8 +103,8 @@ class LoginForm extends React.Component{
                     >
                         Login
                     </button>
+                    <p className='error'>{this.state.error}</p> 
                 </form> 
-                <p className='error'>{this.state.error}</p> 
             </div>
         )
     }

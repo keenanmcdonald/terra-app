@@ -4,6 +4,11 @@ import TerraContext from '../TerraContext'
 class ToolbarButton extends React.Component{
     static contextType = TerraContext
 
+    clickFunction() {
+        if (this.props.enabled){
+            this.props.clickFunction()
+        }
+    }
 
     render(){
         let button;
@@ -14,7 +19,7 @@ class ToolbarButton extends React.Component{
             button = <button className='toolbar-button disabled'><img className='icon' src={this.props.iconUrl} alt={this.props.name}/></button>
         }
         return(
-            <div className='tooltip' onClick={()=>this.props.clickFunction()}>
+            <div className='tooltip' onClick={() => this.clickFunction()}>
                 <span className='tooltip-text'>{this.props.name}</span>
                 {button}
             </div>

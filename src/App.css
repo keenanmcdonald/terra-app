@@ -74,6 +74,9 @@ h5{
     font-weight: 600;
     margin-top: 4px;
 }
+h6, .edit-entity-form label{
+    font-size: 12px;
+}
 .landing-page span{
     font-weight: 900;
 }
@@ -88,6 +91,21 @@ h5{
 }
 .landing-page-buttons button{
     display: inline-block;
+}
+
+.entity-info .name-and-user{
+    display: flex;
+    justify-content: space-between;
+}
+.entity-info .description{
+    margin: 6px 0;
+}
+.info-box{
+    border-top: rgba(255, 255, 255, .6) 1px solid;
+}
+.display-buttons{
+    width: 100%;
+    text-align: center;
 }
 
 button{
@@ -124,6 +142,9 @@ input, textarea {
 .tooltip:hover button{
     background-color: rgba(100, 149, 237, .3)
 }
+.tooltip:hover button.disabled{
+    background-color: rgba(20, 20 ,20, .6);
+}
 button:hover{
     background-color: rgba(100, 149, 237, .3)
 }
@@ -157,7 +178,7 @@ button:hover{
     width: 18px;
 }
 button.selected{
-    background-color: rgb(100, 149, 237);
+    background-color: rgb(100, 149, 237) !important;
 }
 button.disabled{
     color: grey;
@@ -173,7 +194,9 @@ button.disabled.toolbar-button:hover{
     background-color: rgba(20, 20 ,20, .6);
 }
 .display-buttons button{
-    display: inline-block
+    display: inline-block;
+    margin-left: 0px;
+    margin-right: 6px;
 }
 .account-nav{
     display: flex;
@@ -225,13 +248,13 @@ button.disabled.toolbar-button:hover{
 }
 .display{
     color: white;
-    border: solid white 1px;
+    border: solid rgba(255, 255, 255, .8) 1px;
     border-radius: 5px;
     background-color: rgba(20, 20 ,20, .6);
     backdrop-filter: blur(5px);
     padding: 10px;
     position: absolute;
-    width: 50%;
+    width: 40%;
     left: 0;
     right: 0;
     margin: 0 auto;
