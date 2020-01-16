@@ -37,19 +37,6 @@ class App extends React.Component{
     this.login = this.login.bind(this)
   }
 
-
-  getCookieByName(name) 
-    {
-      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
-      if (match) {
-        return match[2]
-      }
-      else{
-        return undefined
-      }
-   }
-
-  //will check to see if there is a login token saved in the user's cookies and log in the user if there is
   componentDidMount(){
     //load landing page for new users
     const previousVisit = (this.getCookieByName('previousVisit') === 'true')
@@ -86,9 +73,19 @@ class App extends React.Component{
     }
   }
 
-  //takes entity data as it is provided from the server and converts position data to the proper Cesium objects
-  //also marks any all entities as 'saved' since they were just pulled from the server
+  getCookieByName(name) 
+  {
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
+    if (match) {
+      return match[2]
+    }
+    else{
+      return undefined
+    }
+ }
+
   parseEntityData(entities){
+    //convert position data from server to Cartesian3 objects
     let newEntities = []
     for (const entity of entities){
       if (entity.type === 'waypoint'){
@@ -102,12 +99,14 @@ class App extends React.Component{
         entity.position = newPosition
         entity.saved = true
       }
+      //mark entities loaded from server as saved
       entity.saved = true
       newEntities.push(entity)
     }
     return newEntities
   }
 
+  //toggle load foreign entities button on toolbar
   toggleLoadForeignEntities(){
     if (this.state.loadForeignEntities && this.state.mode === 'select'){
       this.setMode('')
@@ -124,8 +123,8 @@ class App extends React.Component{
     }
   }
 
-  //checks 'loadForeignEntities' and loads either the current users entities or all users entities into the state
   loadEntities(){
+    //check 'loadForeignEntities' and load either the current users entities or all users entities into the state
     if (this.state.loadForeignEntities){
       fetch(`${config.API_ENDPOINT}entities`, {
         method: 'GET',
@@ -210,6 +209,7 @@ class App extends React.Component{
     this.setMode('create point')
   }
 
+  //called when a route is started, and when a new joint is dropped
   dropRouteJoint(position){
     //checks the current mode to see if the route already exists or needs to be created
     if (this.state.mode === 'create route'){
@@ -241,6 +241,7 @@ class App extends React.Component{
     this.setMode('select')
   }
 
+  //called when the 'add' button is pressed while creating or editing an entity
   saveSelected(e, name, description){
     e.preventDefault()
     let entity = this.state.entities[this.state.selected]
@@ -254,6 +255,7 @@ class App extends React.Component{
     this.setMode('select')
   }
 
+  //deletes entity from the server and removes from the state
   deleteEntity(index){
     let entities = this.state.entities
 
@@ -277,7 +279,7 @@ class App extends React.Component{
     this.setState({entities})
   }
 
-  //called when the cancel button is pressed while adding or editing an entity if the selected entity is unsaved, removes it from the state, if it is saved, it simply switches the mode back from 'edit' to 'select'
+  //called when the cancel button is pressed while adding or editing an entity
   cancelEdit(){
     if (this.state.entities[this.state.selected] && !this.state.entities[this.state.selected].saved){
       let entities = this.state.entities
@@ -307,24 +309,13 @@ class App extends React.Component{
     }
   }
 
-/* not sure if I need this...
-  clearUnsavedEntities(){
-    let entities = this.state.entities
-    let savedEntities = []
-    for (const entity of entities){
-      if (entity.saved){
-        savedEntities.push(entity)
-      }
-    }
-    this.setState({savedEntities})
-  }*/
-
-  //takes user object as an argument, loads user to the state, and calls loadEntities
+  //loads user to the state, and calls loadEntities
   login(user){
     this.setState({user})
     this.loadEntities()
   }
 
+  //logs the current user out, resets the state. 
   logout(){
     this.setState({
       entities:[],
@@ -334,6 +325,7 @@ class App extends React.Component{
       user: undefined,
       message: {text: '', hidden: true, timeoutId: undefined},
     })
+    //remove authToken from local storage and cookies
     window.localStorage.removeItem(config.TOKEN_KEY)
     document.cookie = "authToken= ; expires = Thu, 01 Jan 1992 00:00:00 GMT"
   }

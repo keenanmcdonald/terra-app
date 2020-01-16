@@ -72,7 +72,6 @@ class LoginForm extends React.Component{
             })
             .catch(res => {
                 this.setState({error: 'something went wrong, check that username and password is correct and please try again'})
-                //extract error message from server and send to user?
             })
         
     }

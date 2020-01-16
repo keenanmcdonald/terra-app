@@ -17,14 +17,17 @@ class EditEntityForm extends React.Component{
     updateName(name){
         this.setState({name: name})
     }
+
     updateDescription(description){
         this.setState({description: description})
     }
+
     handleCancel(){
         this.context.methods.setMode('')
         this.context.methods.cancelEdit()
         this.props.requestRender()
     }
+    
     render(){
         const currentEntity = this.context.entities[this.context.selected]
         const allowAdd = (this.state.name && !(currentEntity.type === 'route' && currentEntity.position.length < 2))

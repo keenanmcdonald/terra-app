@@ -20,8 +20,7 @@ import SignupForm from './SignupForm'
 import MessageDisplay from './MessageDisplay'
 import LandingPage from './LandingPage'
 
-
-Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5ZWI5Mzc5NS1iZjNmLTQ0OTEtYTNjOS0xYWY1MTBmNGE0YjAiLCJpZCI6MTg4MzcsInNjb3BlcyI6WyJhc2wiLCJhc3IiLCJhc3ciLCJnYyJdLCJpYXQiOjE1NzQ4MTM3MDJ9.q8-BHVsogGtuJUBMi5K8V-h9frZOQWsZGJwf-CuyDCY'
+Ion.defaultAccessToken = process.env.REACT_APP_CESIUM_ACCESS_KEY
 
 const terrainProvider = createWorldTerrain();
 const MOUNTAIN_VIEWS = {
@@ -46,6 +45,7 @@ class Map extends React.Component {
     static contextType = TerraContext
     
     componentDidMount(){
+        //select random view from the defined set and fly to it
         const view = this.selectRandomElement(MOUNTAIN_VIEWS)
         this.viewer.camera.flyTo({...view, duration: 0})
     }
@@ -56,6 +56,7 @@ class Map extends React.Component {
         return viewsArray[index]
     }
 
+    //reads entities in app's state from context. Draws them on the map
     drawEntities(){
         this.requestRender()
 
@@ -157,7 +158,7 @@ class Map extends React.Component {
         )
     }
 
-    //when a user clicks on the map, if the user clicked on an entity -> selects the entity, if not -> checks current selected tool and drops a new waypoint or route
+    //handles clicks on the map based on current mode, whether user clicks on an entity or not
     handleClick(event) {
         //console.log(this.viewer.camera)
         const mousePosition = event.position
@@ -204,6 +205,8 @@ class Map extends React.Component {
         }
         this.viewer.scene.requestRender()
     }
+
+    //gets the position of a click and the height of the terrain at that position, returns Cartesian3
     async getClickPosition(mousePosition, scene){
         let cartesian = scene.pickPosition(mousePosition)
         let cartographic = Cartographic.fromCartesian(cartesian);
@@ -212,6 +215,8 @@ class Map extends React.Component {
         cartesian = new Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, cartographic.height)
         return cartesian
     }
+
+    //turns the cursor to a pointer when hovering over an entity
     handleHover(event){
         const mousePosition = event.endPosition
         const pickedObject = this.viewer.scene.pick(mousePosition)
@@ -224,11 +229,14 @@ class Map extends React.Component {
             document.body.style.cursor = 'default';
         }
     }
+
+    //rerenders the Cesium map, normally, the map does not render unless the view moves, this method is called when there is a change made to entities displayed on the map
     requestRender(){
         if (this.viewer){
             this.viewer.scene.requestRender()
         }
     }
+    
     render() {
         const entities = this.drawEntities();
         const display = ['edit', 'create point', 'create route', 'select'].some(item => item === this.context.mode) ? <Display requestRender={() => this.requestRender()}/> : ''
