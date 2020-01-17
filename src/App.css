@@ -261,6 +261,7 @@ button.disabled.toolbar-button:hover{
     bottom: 20px;
     opacity: 1;
     transition: opacity 2s linear;
+    z-index: 3;
 }
 .display *{
     color: white;
