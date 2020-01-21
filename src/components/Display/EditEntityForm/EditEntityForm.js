@@ -43,7 +43,7 @@ class EditEntityForm extends React.Component{
                     <textarea name='description' id='description' type='text' rows='3' defaultValue={this.props.description} onChange={e => this.updateDescription(e.target.value)}/>
                 </div>
                 <div className='display-buttons'>
-                    <button id='submit' className={allowAdd ? '' : 'disabled'} type='submit' onClick={e => this.context.methods.saveSelected(e, this.state.name, this.state.description)} disabled={!this.state.name}>
+                    <button id='submit' className={allowAdd ? '' : 'disabled'} type='submit' onClick={e => this.context.methods.saveSelected(e, this.state.name, this.state.description)} disabled={!allowAdd}>
                         Add
                     </button>
                     <button id='cancel' type='button' onClick={() => this.handleCancel()}>
