@@ -1,7 +1,7 @@
 import React from 'react'
-import TerraContext from '../TerraContext'
-import EntityInfo from './EntityInfo'
-import EditEntityForm from './EditEntityForm'
+import TerraContext from '../../TerraContext'
+import EntityInfo from './EntityInfo/EntityInfo'
+import EditEntityForm from './EditEntityForm/EditEntityForm'
 
 class Display extends React.Component{
     static contextType = TerraContext

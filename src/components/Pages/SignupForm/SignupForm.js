@@ -1,7 +1,7 @@
 import React from 'react'
-import config from '../config'
-import AuthApiService from '../services/auth-api-service'
-import TerraContext from '../TerraContext'
+import config from '../../../config'
+import AuthApiService from '../../../services/auth-api-service'
+import TerraContext from '../../../TerraContext'
 
 const REGEX_UPPER_LOWER_NUMBER = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[\S]+/
 // eslint-disable-next-line

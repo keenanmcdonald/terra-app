@@ -1,6 +1,6 @@
 import React from 'react';
 import {withRouter} from 'react-router-dom'
-import TerraContext from '../TerraContext'
+import TerraContext from '../../../TerraContext'
 
 class AccountNav extends React.Component{
     static contextType = TerraContext

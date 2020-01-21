@@ -1,5 +1,5 @@
 import React from 'react';
-import AccountNav from './AccountNav'
+import AccountNav from './AccountNav/AccountNav'
 import {withRouter} from 'react-router-dom'
 
 
@@ -17,7 +17,7 @@ class Header extends React.Component{
         return (
             <header>
                 <div onClick={() => this.onTitleClick()} className="header-title">
-                    <img className="logo" src={require('../images/terra-logo.png')} alt="logo"/>
+                    <img className="logo" src={require('../../images/terra-logo.png')} alt="logo"/>
                     <h1>Terra</h1>
                 </div>
                 <div className="account-nav-container">

@@ -1,7 +1,7 @@
 import React from 'react'
 import {isMobile} from 'react-device-detect'
 import {withRouter} from 'react-router-dom'
-import TerraContext from '../TerraContext'
+import TerraContext from '../../../TerraContext'
 
 
 class LandingPage extends React.Component{

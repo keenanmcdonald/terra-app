@@ -11,14 +11,14 @@ import {
             sampleTerrainMostDetailed, 
             Cartographic
         } from 'cesium'
-import TerraContext from '../TerraContext'
-import Toolbar from './Toolbar'
-import Display from './Display'
+import TerraContext from '../../TerraContext'
+import Toolbar from '../Toolbar/Toolbar'
+import Display from '../Display/Display'
 import {Route} from 'react-router-dom'
-import LoginForm from './LoginForm'
-import SignupForm from './SignupForm'
-import MessageDisplay from './MessageDisplay'
-import LandingPage from './LandingPage'
+import LoginForm from '../Pages/LoginForm/LoginForm'
+import SignupForm from '../Pages/SignupForm/SignupForm'
+import MessageDisplay from '../Header/MessageDisplay/MessageDisplay'
+import LandingPage from '../Pages/LandingPage/LandingPage'
 
 Ion.defaultAccessToken = process.env.REACT_APP_CESIUM_ACCESS_KEY
 
