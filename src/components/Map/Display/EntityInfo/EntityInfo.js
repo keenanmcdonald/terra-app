@@ -1,5 +1,5 @@
 import React from 'react'
-import TerraContext from '../../../TerraContext'
+import TerraContext from '../../../../TerraContext'
 
 
 class EntityInfo extends React.Component{

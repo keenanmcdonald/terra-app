@@ -1,13 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from './App'
+import MessageDisplay from './MessageDisplay'
 import { BrowserRouter } from 'react-router-dom'
 
-it('App renders without crashing', () => {
+it('MessageDisplay renders without crashing', () => {
   const div = document.createElement('div')
   ReactDOM.render(
     <BrowserRouter>
-      <App />
+      <MessageDisplay />
     </BrowserRouter>, 
     div
   )

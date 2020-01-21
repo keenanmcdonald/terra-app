@@ -11,4 +11,3 @@ it('AccountNav renders without crashing', () => {
         </BrowserRouter>, div);
     ReactDOM.unmountComponentAtNode(div);
   })
-  

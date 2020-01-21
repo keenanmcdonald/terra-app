@@ -7,7 +7,6 @@ import './App.css'
 import config from './config'
 import {Cartesian3} from 'cesium'
 import {withRouter} from 'react-router-dom'
-import ErrorBoundary from './components/ErrorBoundary'
 
 
 class App extends React.Component{
@@ -356,9 +355,7 @@ class App extends React.Component{
         <TerraContext.Provider value={contextValue}>
         <Header />
           <main>
-            <ErrorBoundary>
               <Map displaySearchButton={this.state.displaySearchButton}/>
-            </ErrorBoundary>
           </main>
         </TerraContext.Provider>
       </div>

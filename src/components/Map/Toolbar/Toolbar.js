@@ -1,6 +1,6 @@
 import React from 'react'
-import ToolbarButton from './ToolbarButton'
-import TerraContext from '../../TerraContext'
+import ToolbarButton from './ToolbarButton/ToolbarButton'
+import TerraContext from '../../../TerraContext'
 
 class Toolbar extends React.Component{
     static contextType = TerraContext

@@ -1,7 +1,7 @@
 import React from 'react'
-import config from '../../../config'
-import AuthApiService from '../../../services/auth-api-service'
-import TerraContext from '../../../TerraContext'
+import config from '../../../../config'
+import AuthApiService from '../../../../services/auth-api-service'
+import TerraContext from '../../../../TerraContext'
 
 // eslint-disable-next-line
 const REGEX_EMAIL_VALIDATION = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/

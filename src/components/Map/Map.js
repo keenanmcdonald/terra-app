@@ -12,13 +12,14 @@ import {
             Cartographic
         } from 'cesium'
 import TerraContext from '../../TerraContext'
-import Toolbar from '../Toolbar/Toolbar'
-import Display from '../Display/Display'
+import Toolbar from './Toolbar/Toolbar'
+import Display from './Display/Display'
 import {Route} from 'react-router-dom'
-import LoginForm from '../Pages/LoginForm/LoginForm'
-import SignupForm from '../Pages/SignupForm/SignupForm'
-import MessageDisplay from '../Header/MessageDisplay/MessageDisplay'
-import LandingPage from '../Pages/LandingPage/LandingPage'
+import LoginForm from './Pages/LoginForm/LoginForm'
+import SignupForm from './Pages/SignupForm/SignupForm'
+import MessageDisplay from './MessageDisplay/MessageDisplay'
+import LandingPage from './Pages/LandingPage/LandingPage'
+import ErrorBoundary from './ErrorBoundary'
 
 Ion.defaultAccessToken = process.env.REACT_APP_CESIUM_ACCESS_KEY
 
@@ -246,37 +247,39 @@ class Map extends React.Component {
 
         return (
             <div className='map-container'>
-                <Viewer 
-                    ref={e => {
-                        this.viewer = e ? e.cesiumElement : null;
-                    }}
-                    animation={false} 
-                    baseLayerPicker={false}
-                    fullscreenButton={false}
-                    homeButton={false}
-                    infoBox={false}
-                    sceneModePicker={false}
-                    timeline={false}
-                    navigationHelpButton={false}
-                    selectionIndicator={false}
-                    terrainProvider={terrainProvider}
-                    requestRenderMode={true}
-                    maximumRenderTimeChange= {Infinity}
-                    scene3DOnly={true}>
-                    <Globe depthTestAgainstTerrain={true}>
-                        {message}
-                        {entities}
-                        {display}
-                        <Toolbar/>
-                        <ScreenSpaceEventHandler>
-                            <ScreenSpaceEvent action={e => this.handleClick(e)} type={ScreenSpaceEventType.LEFT_CLICK} />
-                            <ScreenSpaceEvent action={e => this.handleHover(e)} type={ScreenSpaceEventType.MOUSE_MOVE}/>
-                        </ScreenSpaceEventHandler>
-                        <Route path='/welcome' component={LandingPage}/>
-                        <Route path='/login' component={LoginForm}/>
-                        <Route path='/signup' component={SignupForm}/>
-                    </Globe>
-                </Viewer>
+                <ErrorBoundary>
+                    <Viewer 
+                        ref={e => {
+                            this.viewer = e ? e.cesiumElement : null;
+                        }}
+                        animation={false} 
+                        baseLayerPicker={false}
+                        fullscreenButton={false}
+                        homeButton={false}
+                        infoBox={false}
+                        sceneModePicker={false}
+                        timeline={false}
+                        navigationHelpButton={false}
+                        selectionIndicator={false}
+                        terrainProvider={terrainProvider}
+                        requestRenderMode={true}
+                        maximumRenderTimeChange= {Infinity}
+                        scene3DOnly={true}>
+                        <Globe depthTestAgainstTerrain={true}>
+                            {message}
+                            {entities}
+                            {display}
+                            <Toolbar/>
+                            <ScreenSpaceEventHandler>
+                                <ScreenSpaceEvent action={e => this.handleClick(e)} type={ScreenSpaceEventType.LEFT_CLICK} />
+                                <ScreenSpaceEvent action={e => this.handleHover(e)} type={ScreenSpaceEventType.MOUSE_MOVE}/>
+                            </ScreenSpaceEventHandler>
+                            <Route path='/welcome' component={LandingPage}/>
+                            <Route path='/login' component={LoginForm}/>
+                            <Route path='/signup' component={SignupForm}/>
+                        </Globe>
+                    </Viewer>
+                </ErrorBoundary>
             </div>
         );
     }
