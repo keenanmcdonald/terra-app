@@ -46,12 +46,6 @@ h1 {
     font-family: 'Montserrat', sans-serif;
     font-size: 24px;
 }
-.header-title h1 {
-    position: absolute;
-    display: inline-block;
-    margin-left: 42px;
-    top: 10px;
-}
 h2{
     font-family: 'Montserrat', sans-serif;
     font-size: 12px;
@@ -76,6 +70,87 @@ h5{
 h6, .edit-entity-form label{
     font-size: 12px;
 }
+button{
+    border: solid white 1px;
+    color: white;
+    background-color: transparent;
+    border-radius: 5px;
+    transition: 0.2s;
+    display: block;
+    cursor: pointer;
+    margin: 4px;
+    padding: 3px 6px;
+}
+button:hover{
+    background-color: rgba(100, 149, 237, .3)
+}
+button.disabled{
+    color: grey;
+    border-color: grey;
+}
+button.disabled:hover{
+    background-color: transparent;
+}
+label {
+    display: block;
+}
+input, textarea {
+    margin: 4px;
+    background-color: transparent;
+    border: solid rgba(255, 255, 255, .8) 1px;
+    border-radius: 5px;
+    color: white;
+}
+
+/*Header*/
+.header-title h1 {
+    position: absolute;
+    display: inline-block;
+    margin-left: 42px;
+    top: 10px;
+}
+.logo {
+    height: 40px;
+    position: absolute;
+    top: 3px;
+}
+.account-nav{
+    display: flex;
+    margin-top: 10px;
+}
+.header-title {
+    cursor: pointer;
+}
+
+
+/*Pages*/
+.page-backdrop{
+    position: absolute;
+    top: 54px;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(20, 20 ,20, .6);
+    backdrop-filter: blur(5px);
+    padding: 5% 5%;
+    color: white;
+    text-align: center;
+}
+.login-form, .signup-form{
+    display: inline-block;
+    text-align: left;
+ }
+ .validation-error{
+     width: 130px;
+ }
+ .error{
+     font-size: 10px;
+     color: red;
+     width: 130px;
+ }
+ 
+
+/*LandingPage*/
 .landing-page span{
     font-weight: 900;
 }
@@ -92,162 +167,7 @@ h6, .edit-entity-form label{
     display: inline-block;
 }
 
-.entity-info .name-and-user{
-    display: flex;
-    justify-content: space-between;
-}
-.entity-info .description{
-    margin: 6px 0;
-}
-.info-box{
-    border-top: rgba(255, 255, 255, .6) 1px solid;
-}
-.display-buttons{
-    width: 100%;
-    text-align: center;
-}
-
-button{
-    border: solid white 1px;
-    color: white;
-    background-color: transparent;
-    border-radius: 5px;
-    transition: 0.2s;
-    display: block;
-    cursor: pointer;
-    margin: 4px;
-    padding: 3px 6px;
-}
-button.load-entities{
-    margin-top: 30px;
-}
-.toolbar button{
-    background-color: rgba(20, 20 ,20, .6);
-    backdrop-filter: blur(5px);
-}
-label {
-    display: block;
-}
-label.stay-signed-in{
-    display: inline-block;
-}
-input, textarea {
-    margin: 4px;
-    background-color: transparent;
-    border: solid rgba(255, 255, 255, .8) 1px;
-    border-radius: 5px;
-    color: white;
-}
-.tooltip:hover button{
-    background-color: rgba(100, 149, 237, .3)
-}
-.tooltip:hover button.disabled{
-    background-color: rgba(20, 20 ,20, .6);
-}
-button:hover{
-    background-color: rgba(100, 149, 237, .3)
-}
-.map-container{
-    height: 300px;
-    width: 100%;
-    z-index: -1;
-}
-.cesium-widget{
-    height: 100vh;
-}
-.logo {
-    height: 40px;
-    position: absolute;
-    top: 3px;
-}
-.page-backdrop{
-    position: absolute;
-    top: 54px;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background-color: rgba(20, 20 ,20, .6);
-    backdrop-filter: blur(5px);
-    padding: 5% 5%;
-    color: white;
-    text-align: center;
-}
-.icon{
-    height: 18px;
-    width: 18px;
-}
-button.selected{
-    background-color: rgb(100, 149, 237) !important;
-}
-button.disabled{
-    color: grey;
-    border-color: grey;
-}
-button.disabled img {
-    filter: brightness(30%);
-}
-button.disabled:hover{
-    background-color: transparent;
-}
-button.disabled.toolbar-button:hover{
-    background-color: rgba(20, 20 ,20, .6);
-}
-.display-buttons button{
-    display: inline-block;
-    margin-left: 0px;
-    margin-right: 6px;
-}
-.account-nav{
-    display: flex;
-    margin-top: 10px;
-}
-.header-title {
-    cursor: pointer;
-}
-.waypoint{
-    height: 20px;
-}
-.toolbar{
-    position: absolute;
-    top: 61px;
-    left: 21px;
-}
-.login-form, .signup-form{
-   display: inline-block;
-   text-align: left;
-}
-.validation-error{
-    width: 130px;
-}
-.error{
-    font-size: 10px;
-    color: red;
-    width: 130px;
-}
-.message-container{
-    color: white;
-    position: absolute;
-    top: 34px;
-    transition: opacity 2s linear;
-    width: 80%;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    z-index: 2;
-    font-size: 12px;
-    text-align: center;
-}
-.message-container p{
-    font-size: 11px;
-}
-.message.visible{
-    opacity: 1;
-    transition: .7s linear;
-}
-.message.hidden{
-    opacity: 0;
-    transition: .7s linear;
-}
+/*Display*/
 .display{
     color: white;
     border: solid rgba(255, 255, 255, .8) 1px;
@@ -287,18 +207,112 @@ button.disabled.toolbar-button:hover{
 .edit-entity-form button{
     display: inline-block;
 }
-
 textarea#description{
     height: 80px;
     width: 250px;
     resize: none;
 
 }
+.entity-info .name-and-user{
+    display: flex;
+    justify-content: space-between;
+}
+.entity-info .description{
+    margin: 6px 0;
+}
+.info-box{
+    border-top: rgba(255, 255, 255, .6) 1px solid;
+}
+.display-buttons{
+    width: 100%;
+    text-align: center;
+}
+.display-buttons button{
+    display: inline-block;
+    margin-left: 0px;
+    margin-right: 6px;
+}
+
+
+/*Toolbar*/
+.toolbar{
+    position: absolute;
+    top: 61px;
+    left: 21px;
+}
 .toolbar-button{
     height: 32px;
     width: 32px;
     padding-top: 5px;
+    background-color: rgba(20, 20 ,20, .6);
+    backdrop-filter: blur(5px);
 }
+button.selected{
+    background-color: rgb(100, 149, 237) !important;
+}
+button.load-entities{
+    margin-top: 30px;
+}
+button.disabled img {
+    filter: brightness(30%);
+}
+button.disabled.toolbar-button:hover{
+    background-color: rgba(20, 20 ,20, .6);
+}
+.tooltip:hover button{
+    background-color: rgba(100, 149, 237, .3)
+}
+.tooltip:hover button.disabled{
+    background-color: rgba(20, 20 ,20, .6);
+}
+.icon{
+    height: 18px;
+    width: 18px;
+}
+
+
+/*Login*/
+label.stay-signed-in{
+    display: inline-block;
+}
+.map-container{
+    height: 300px;
+    width: 100%;
+    z-index: -1;
+}
+
+/*Map*/
+.cesium-widget{
+    height: 100vh;
+}
+
+/*Message*/
+.message-container{
+    color: white;
+    position: absolute;
+    top: 34px;
+    transition: opacity 2s linear;
+    width: 80%;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    z-index: 2;
+    font-size: 12px;
+    text-align: center;
+}
+.message-container p{
+    font-size: 11px;
+}
+.message.visible{
+    opacity: 1;
+    transition: .7s linear;
+}
+.message.hidden{
+    opacity: 0;
+    transition: .7s linear;
+}
+
+/*Cesium Search Bar*/
 .cesium-viewer-toolbar{
     margin-top: 60px;
 }
@@ -347,8 +361,12 @@ textarea#description{
     visibility: visible;
   }
   
-
+/*Phone screen media query*/
 @media only screen and (max-width: 500px) {
+
+    input, p, textarea{
+        font-size: 16px;
+    }
     .display {
         width: 85%;
         bottom: 34px;
@@ -362,9 +380,5 @@ textarea#description{
     .message-container{
         font-size: 10px;
         top: 38px;
-    }
-
-    input, p, textarea{
-        font-size: 16px;
     }
 }
