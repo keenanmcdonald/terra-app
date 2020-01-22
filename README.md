@@ -18,12 +18,11 @@ https://github.com/keenanmcdonald/terra-server
 ### Screenshots
 Desktop:
 
-<img src="./public/screenshots/terra-desktop.png" alt="desktop screenshot">
-
+<img src="public/screenshots/terra-desktop.png" alt="desktop screenshot">
 
 Mobile: 
 
-<img src="./public/screenshots/terra-mobile.png" alt="mobile screenshot">
+<img src="public/screenshots/terra-mobile.png" alt="mobile screenshot">
 
 
 ### Technology Used
