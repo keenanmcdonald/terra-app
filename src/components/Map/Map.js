@@ -25,33 +25,9 @@ Ion.defaultAccessToken = process.env.REACT_APP_CESIUM_ACCESS_KEY
 
 const terrainProvider = createWorldTerrain();
 
-/*const MOUNTAIN_VIEWS = {
-    GrandTeton: {
-        destination: new Cartesian3(-1631671.044420763, -4323646.892947312, 4389361.1347925365),
-        orientation: {direction: new Cartesian3(-0.7298340716352859, 0.680904387616289, -0.060921611971013895), up: new Cartesian3(-0.5138818030145764, -0.4876629521263775, 0.7057693232592888)},
-    },
-    Orizaba: {
-        destination: new Cartesian3(-768856.7886796016, -5986001.429157894, 2081366.4297407947),
-        orientation: {direction: new Cartesian3(0.38626413322197944, -0.04613584813909305, -0.9212336852844448), up: new Cartesian3(-0.0033169618581180838, -0.9988113438994612, 0.04863020729735895)},    
-    },
-    Denali: {
-        destination: new Cartesian3(-2509961.713939744, -1400628.0705196098, 5681935.078713867),
-        orientation: {direction: new Cartesian3(-0.8493720621232732, -0.15615300528867923, -0.5041659836043805), up: new Cartesian3(-0.46426077041257685, -0.2333297158691932, 0.8544115991419605)},
-    },
-    Fuji: {
-        destination: new Cartesian3(-3912756.3324862844, 3431761.9013772095, 3683337.2288680817),
-        orientation: {direction: new Cartesian3(-0.17159108061857778, 0.277971183976757, -0.9451394193084471), up: new Cartesian3(-0.6936508568463772, 0.6471652645570205, 0.31626825504171086)},
-    },
-}*/
 class Map extends React.Component {
     static contextType = TerraContext
-    
-    
-    /*componentDidMount(){
-        //select random view from the defined set and fly to it
-        const view = this.selectRandomElement(MOUNTAIN_VIEWS)
-        this.viewer.camera.flyTo({...view, duration: 0})
-    }*/
+
 
     selectRandomElement(views){
         const viewsArray = Object.values(views)
