@@ -28,3 +28,7 @@ Mobile:
 ### Technology Used
 Front End: Javascript, React, CesiumJS library used for 3D mapping, Resium used to help integrate Cesium with React.
 Back End: NodeJS, Express
+
+### Demo Login Credentials
+email: demo@thinkful.com
+password: Thinkful123
