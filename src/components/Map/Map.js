@@ -148,10 +148,10 @@ class Map extends React.Component {
             }
             else{
                 this.getClickPosition(mousePosition, this.viewer.scene)
-                .then(position => {
-                    this.context.methods.dropWaypoint(position)
-                })
-                .catch(error => console.log(error))
+                    .then(position => {
+                        this.context.methods.dropWaypoint(position)
+                    })
+                    .catch(error => console.log(error))
             }
         }
         else if (this.context.mode === 'create route' || this.context.mode === 'add route'){
@@ -191,8 +191,9 @@ class Map extends React.Component {
         let cartographic = Cartographic.fromCartesian(cartesian);
         let sampledArray = await sampleTerrainMostDetailed(terrainProvider, [cartographic])
         cartographic = sampledArray[0]
+        const elevation = Math.round(cartographic.height * 3.28084) //converting meters to feet
         cartesian = new Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, cartographic.height)
-        return cartesian
+        return {cartesian, elevation}
     }
 
     //turns the cursor to a pointer when hovering over an entity

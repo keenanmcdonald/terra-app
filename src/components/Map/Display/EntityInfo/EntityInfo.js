@@ -11,6 +11,11 @@ class EntityInfo extends React.Component{
         this.props.requestRender()
     }
 
+    numberWithCommas(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    
+
     render(){
         let description;
         if (this.props.description){
@@ -41,6 +46,12 @@ class EntityInfo extends React.Component{
                         <h6>Created By:</h6>
                         <p>{this.props.user_name}</p>
                     </div>
+                    {this.props.elevation ? (
+                        <div className='elevation info-box'> 
+                            <h6>Elevation:</h6>
+                            <p>{this.numberWithCommas(this.props.elevation)}ft</p>
+                        </div>
+                    ) : ''}
                 </div>
                 {description}
                 {buttons}

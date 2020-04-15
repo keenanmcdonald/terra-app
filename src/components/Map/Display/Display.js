@@ -13,7 +13,7 @@ class Display extends React.Component{
             content = <EditEntityForm name={selected.name} description={selected.description} requestRender={this.props.requestRender}/>
         }
         else if (this.context.mode === 'select'){
-            content = <EntityInfo name={selected.name} description={selected.description} user_name={selected.user_name} requestRender={this.props.requestRender}/>
+            content = <EntityInfo {...selected} requestRender={this.props.requestRender}/>
         }
         return(
             <div className='display-container'>
