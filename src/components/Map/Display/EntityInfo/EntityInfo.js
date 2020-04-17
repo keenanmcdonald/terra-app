@@ -1,6 +1,7 @@
 import React from 'react'
 import TerraContext from '../../../../TerraContext'
 import ElevationProfile from '../ElevationProfile/ElevationProfile'
+import {Math as CesiumMath} from 'cesium'
 
 
 class EntityInfo extends React.Component{
@@ -51,9 +52,27 @@ class EntityInfo extends React.Component{
                         <div className='elevation info-box'> 
                             <h6>Elevation:</h6>
                             {this.props.type === 'waypoint' ? (
-                                <p>{this.numberWithCommas(this.props.position.height * 3.28084)}ft</p>
+                                <p>{this.numberWithCommas(Math.round(this.props.position.height * 3.28084))}ft</p>
                             ) 
                             : <ElevationProfile position={this.props.position}/>}
+                        </div>
+                    ) : ''}
+                    {this.props.type === 'waypoint' ? (
+                        <div className='latitude info-box'>
+                            <h6>Latitude:</h6>
+                            <p>{Math.round(CesiumMath.toDegrees(this.props.position.latitude) * 100) * .01}</p>
+                        </div>
+                    ) : ''}
+                    {this.props.type === 'waypoint' ? (
+                        <div className='longitude info-box'>
+                            <h6>Longitude:</h6>
+                            <p>{Math.round(CesiumMath.toDegrees(this.props.position.longitude) * 100) * .01}</p>
+                        </div>
+                    ) : ''}
+                    {this.props.type === 'route' ? (
+                        <div className='distance info-box'>
+                            <h6>Distance:</h6>
+                            <p>{Math.round(this.props.distance*100)*.01} miles</p>
                         </div>
                     ) : ''}
                 </div>

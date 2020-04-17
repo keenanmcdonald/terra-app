@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@craco/craco": "^5.6.3",
+    "@turf/turf": "^5.1.6",
     "cesium": "^1.65.0",
     "craco-cesium": "^1.2.0",
     "dotenv": "^8.2.0",

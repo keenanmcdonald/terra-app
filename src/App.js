@@ -7,6 +7,8 @@ import './App.css'
 import config from './config'
 import {Cartographic} from 'cesium'
 import {withRouter} from 'react-router-dom'
+import * as turf from '@turf/turf'
+import {Math as CesiumMath} from 'cesium'
 
 
 class App extends React.Component{
@@ -88,7 +90,6 @@ class App extends React.Component{
     //convert position data from server to Cartesian3 objects
     let newEntities = []
     for (const entity of entities){
-      console.log('position pre parse: ', entity.position[0])
       if (entity.type === 'waypoint'){
         entity.position = new Cartographic(entity.position[0][1], entity.position[0][0], entity.position[0][2]);
       } 
@@ -97,6 +98,7 @@ class App extends React.Component{
         for (const position of entity.position){
           newPosition.push(new Cartographic(position[1], position[0], position[2]))
         }
+        entity.distance = this.calculateRouteDistance(entity.position)
         entity.position = newPosition
         entity.saved = true
       }
@@ -141,7 +143,6 @@ class App extends React.Component{
           return res.json()
         })
         .then(resJson => {
-          console.log(resJson)
           const entities = this.parseEntityData(resJson)
           this.setState({entities})
         })
@@ -204,7 +205,6 @@ class App extends React.Component{
 
   //creates a new waypoint and puts it in the state, does NOT upload to the server
   dropWaypoint(position) {
-    console.log('position at dropWaypoint: ', position)
     const waypoint = {position: position, name: '', description: '', type: 'waypoint', user_name: this.state.user.user_name, saved: false, id: -1}
     let entities = this.state.entities
     entities.push(waypoint)
@@ -220,18 +220,33 @@ class App extends React.Component{
       let entities = this.state.entities
       let route = entities[this.state.selected]
       route.position.push(position)
+      route.distance += this.calculateLegDistance(route.position[route.position.length-1], route.position[route.position.length-2])
       entities.splice(this.state.selected, 1)
       entities.push(route)
       this.setState({entities, selected: entities.length-1})
     }
     else {
       this.displayMessage('Click on the map again to draw a line between points', 4000)
-      let route = {position: [position], name: '', description: '', type: 'route', user_name: this.state.user.user_name, saved: false, id: -1}
+      let route = {position: [position], name: '', description: '', type: 'route', user_name: this.state.user.user_name, saved: false, id: -1, distance: 0}
       let entities = this.state.entities
       entities.push(route)
       this.setState({entities, selected: entities.length-1})
       this.setMode('create route')
     }
+  }
+
+  calculateRouteDistance(positions){
+    let totalDistance = 0
+    for (let i = 1; i < positions.length; i++){
+      totalDistance += this.calculateLegDistance(positions[i-1], positions[i])
+    }
+    return totalDistance
+  }
+
+  calculateLegDistance(point1, point2){
+    const from = turf.point([CesiumMath.toDegrees(point1.longitude), CesiumMath.toDegrees(point1.latitude)])
+    const to = turf.point([CesiumMath.toDegrees(point2.longitude), CesiumMath.toDegrees(point2.latitude)])
+    return turf.distance(from, to, {units: 'miles'})
   }
 
   selectEntity(id) {

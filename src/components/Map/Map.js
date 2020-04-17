@@ -68,7 +68,6 @@ class Map extends React.Component {
     }
 
     drawWaypoint(waypoint){
-        console.log('position at drawWaypoint: ', waypoint)
         const pixelSize = waypoint.isSelected ? 16 : 14
         const outlineWidth = waypoint.isSelected ? 2 : 1
         const cartesian = new Cartesian3.fromRadians(waypoint.position.longitude, waypoint.position.latitude, waypoint.position.height)
@@ -98,7 +97,7 @@ class Map extends React.Component {
         let joints = [];
         for (let i = 0; i < route.position.length; i++){
             const isEndpoint = (i === 0 || i === route.position.length-1)
-            cartesianPositions.push(new Cartesian3.fromRadians(route.position.longitude, route.position.latitude, route.position.height))
+            cartesianPositions.push(new Cartesian3.fromRadians(route.position[i].longitude, route.position[i].latitude, route.position[i].height))
             const pixelSize = route.isSelected ? (isEndpoint ? 12 : 8) : (isEndpoint ? 10 : 8)
             joints.push(
                 <Entity
@@ -194,7 +193,6 @@ class Map extends React.Component {
     async getClickPosition(mousePosition, scene){
         let cartesian = scene.pickPosition(mousePosition)
         let cartographic = Cartographic.fromCartesian(cartesian);
-        const longitude = CesiumMath.toDegrees(cartographic.longitude)
         let sampledArray = await sampleTerrainMostDetailed(terrainProvider, [cartographic])
         const position = sampledArray[0]
         return position
