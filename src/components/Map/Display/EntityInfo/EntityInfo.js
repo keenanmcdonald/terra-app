@@ -1,5 +1,6 @@
 import React from 'react'
 import TerraContext from '../../../../TerraContext'
+import ElevationProfile from '../ElevationProfile/ElevationProfile'
 
 
 class EntityInfo extends React.Component{
@@ -49,7 +50,10 @@ class EntityInfo extends React.Component{
                     {this.props.elevation ? (
                         <div className='elevation info-box'> 
                             <h6>Elevation:</h6>
-                            <p>{this.numberWithCommas(this.props.elevation)}ft</p>
+                            {this.props.type === 'waypoint' ? (
+                                <p>{this.numberWithCommas(this.props.elevation)}ft</p>
+                            ) 
+                            : <ElevationProfile elevation={this.props.elevation}/>}
                         </div>
                     ) : ''}
                 </div>
