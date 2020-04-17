@@ -88,13 +88,14 @@ class App extends React.Component{
     //convert position data from server to Cartesian3 objects
     let newEntities = []
     for (const entity of entities){
+      console.log('position pre parse: ', entity.position[0])
       if (entity.type === 'waypoint'){
-        entity.position = new Cartographic.fromDegrees(entity.position[0], entity.position[1], entity.position[2]);
+        entity.position = new Cartographic(entity.position[0][1], entity.position[0][0], entity.position[0][2]);
       } 
       else if (entity.type === 'route'){
         let newPosition = []
         for (const position of entity.position){
-          newPosition.push(new Cartographic.fromDegrees(position[0], position[1], position[2]))
+          newPosition.push(new Cartographic(position[1], position[0], position[2]))
         }
         entity.position = newPosition
         entity.saved = true

@@ -9,7 +9,8 @@ import {
             createWorldTerrain, 
             ScreenSpaceEventType, 
             sampleTerrainMostDetailed, 
-            Cartographic
+            Cartographic,
+            Math as CesiumMath
         } from 'cesium'
 import TerraContext from '../../TerraContext'
 import Toolbar from './Toolbar/Toolbar'
@@ -193,10 +194,9 @@ class Map extends React.Component {
     async getClickPosition(mousePosition, scene){
         let cartesian = scene.pickPosition(mousePosition)
         let cartographic = Cartographic.fromCartesian(cartesian);
+        const longitude = CesiumMath.toDegrees(cartographic.longitude)
         let sampledArray = await sampleTerrainMostDetailed(terrainProvider, [cartographic])
         const position = sampledArray[0]
-        //const elevation = Math.round(cartographic.height * 3.28084) //converting meters to feet
-        //cartesian = new Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, cartographic.height)
         return position
     }
 
