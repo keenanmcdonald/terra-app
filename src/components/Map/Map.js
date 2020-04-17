@@ -67,14 +67,16 @@ class Map extends React.Component {
     }
 
     drawWaypoint(waypoint){
+        console.log('position at drawWaypoint: ', waypoint)
         const pixelSize = waypoint.isSelected ? 16 : 14
         const outlineWidth = waypoint.isSelected ? 2 : 1
+        const cartesian = new Cartesian3.fromRadians(waypoint.position.longitude, waypoint.position.latitude, waypoint.position.height)
 
         return (
             <Entity 
                 key={waypoint.id}
                 id={waypoint.id}
-                position={waypoint.position}
+                position={cartesian}
                 type={'waypoint'}
                 point={{
                     pixelSize,
@@ -90,10 +92,12 @@ class Map extends React.Component {
     drawRoute(route){
         const width = route.isSelected ? 7 : 5
         const outlineWidth = route.isSelected ? 2 : 0
+        const cartesianPositions = []
 
         let joints = [];
         for (let i = 0; i < route.position.length; i++){
             const isEndpoint = (i === 0 || i === route.position.length-1)
+            cartesianPositions.push(new Cartesian3.fromRadians(route.position.longitude, route.position.latitude, route.position.height))
             const pixelSize = route.isSelected ? (isEndpoint ? 12 : 8) : (isEndpoint ? 10 : 8)
             joints.push(
                 <Entity
@@ -101,7 +105,7 @@ class Map extends React.Component {
                     id={`r${route.id}j${i}`}
                     isEndpoint={isEndpoint}
                     type={'joint'}
-                    position={route.position[i]}
+                    position={cartesianPositions[i]}
                     point={{
                         pixelSize,
                         color: route.color,
@@ -118,9 +122,9 @@ class Map extends React.Component {
                     key={route.id}
                     id={route.id}
                     type={'polyline'}
-                    position={route.position[0]}
+                    position={cartesianPositions[0]}
                     polyline={new PolylineGraphics({
-                        positions: route.position,
+                        positions: cartesianPositions,
                         width,
                         clampToGround: true,
                         material: new PolylineOutlineMaterialProperty({
@@ -190,10 +194,10 @@ class Map extends React.Component {
         let cartesian = scene.pickPosition(mousePosition)
         let cartographic = Cartographic.fromCartesian(cartesian);
         let sampledArray = await sampleTerrainMostDetailed(terrainProvider, [cartographic])
-        cartographic = sampledArray[0]
-        const elevation = Math.round(cartographic.height * 3.28084) //converting meters to feet
-        cartesian = new Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, cartographic.height)
-        return {cartesian, elevation}
+        const position = sampledArray[0]
+        //const elevation = Math.round(cartographic.height * 3.28084) //converting meters to feet
+        //cartesian = new Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, cartographic.height)
+        return position
     }
 
     //turns the cursor to a pointer when hovering over an entity

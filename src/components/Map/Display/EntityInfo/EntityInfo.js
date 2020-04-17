@@ -47,13 +47,13 @@ class EntityInfo extends React.Component{
                         <h6>Created By:</h6>
                         <p>{this.props.user_name}</p>
                     </div>
-                    {this.props.elevation ? (
+                    {this.props.position.height ? (
                         <div className='elevation info-box'> 
                             <h6>Elevation:</h6>
                             {this.props.type === 'waypoint' ? (
-                                <p>{this.numberWithCommas(this.props.elevation)}ft</p>
+                                <p>{this.numberWithCommas(this.props.position.height * 3.28084)}ft</p>
                             ) 
-                            : <ElevationProfile elevation={this.props.elevation}/>}
+                            : <ElevationProfile position={this.props.position}/>}
                         </div>
                     ) : ''}
                 </div>

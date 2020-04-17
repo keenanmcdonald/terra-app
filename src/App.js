@@ -5,7 +5,7 @@ import { hot } from 'react-hot-loader/root'
 import TerraContext from './TerraContext'
 import './App.css'
 import config from './config'
-import {Cartesian3} from 'cesium'
+import {Cartographic} from 'cesium'
 import {withRouter} from 'react-router-dom'
 
 
@@ -89,12 +89,12 @@ class App extends React.Component{
     let newEntities = []
     for (const entity of entities){
       if (entity.type === 'waypoint'){
-        entity.position = new Cartesian3.fromArray(entity.position[0]);
+        entity.position = new Cartographic.fromDegrees(entity.position[0], entity.position[1], entity.position[2]);
       } 
       else if (entity.type === 'route'){
         let newPosition = []
         for (const position of entity.position){
-          newPosition.push(new Cartesian3.fromArray(position))
+          newPosition.push(new Cartographic.fromDegrees(position[0], position[1], position[2]))
         }
         entity.position = newPosition
         entity.saved = true
@@ -171,16 +171,11 @@ class App extends React.Component{
   //accepts an entity object as an argument and posts the entity to the server
   uploadEntity(entity){
     let position = []
-    let elevation = []
     if (entity.type === 'waypoint'){
-      position = [[entity.position.x, entity.position.y, entity.position.z]]
-      elevation = [entity.elevation]
+      position = [[entity.position.latitude, entity.position.longitude, entity.position.height]]
     } else if (entity.type === 'route') {
       for (let i = 0; i < entity.position.length; i++){
-        position.push([entity.position[i].x, entity.position[i].y, entity.position[i].z])
-      }
-      for (let i = 0; i < entity.elevation.length; i++){
-        elevation.push(entity.elevation[i])
+        position.push([entity.position[i].latitude, entity.position[i].longitude, entity.position[i].height])
       }
     }
 
@@ -190,7 +185,6 @@ class App extends React.Component{
       user_name: this.state.user.user_name,
       type: entity.type,
       position,
-      elevation,
     }
 
     fetch(`${config.API_ENDPOINT}entities`, {
@@ -209,7 +203,8 @@ class App extends React.Component{
 
   //creates a new waypoint and puts it in the state, does NOT upload to the server
   dropWaypoint(position) {
-    const waypoint = {position: position.cartesian, elevation: position.elevation, name: '', description: '', type: 'waypoint', user_name: this.state.user.user_name, saved: false, id: -1}
+    console.log('position at dropWaypoint: ', position)
+    const waypoint = {position: position, name: '', description: '', type: 'waypoint', user_name: this.state.user.user_name, saved: false, id: -1}
     let entities = this.state.entities
     entities.push(waypoint)
     this.setState({entities, selected: entities.length-1})
@@ -223,15 +218,14 @@ class App extends React.Component{
       this.displayMessage('Click on the map again to draw a line between points', 4000)
       let entities = this.state.entities
       let route = entities[this.state.selected]
-      route.position.push(position.cartesian)
-      route.elevation.push(position.elevation)
+      route.position.push(position)
       entities.splice(this.state.selected, 1)
       entities.push(route)
       this.setState({entities, selected: entities.length-1})
     }
     else {
       this.displayMessage('Click on the map again to draw a line between points', 4000)
-      let route = {position: [position.cartesian], elevation: [position.elevation], name: '', description: '', type: 'route', user_name: this.state.user.user_name, saved: false, id: -1}
+      let route = {position: [position], name: '', description: '', type: 'route', user_name: this.state.user.user_name, saved: false, id: -1}
       let entities = this.state.entities
       entities.push(route)
       this.setState({entities, selected: entities.length-1})
