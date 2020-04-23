@@ -37,6 +37,7 @@ class EntityInfo extends React.Component{
                 </div>
             )
         }
+        console.log(this.props)
         return (
             <div className='entity-info'>
                 <div className='name-and-user'>
@@ -48,7 +49,7 @@ class EntityInfo extends React.Component{
                         <h6>Created By:</h6>
                         <p>{this.props.user_name}</p>
                     </div>
-                    {this.props.position.height ? (
+                    {this.props.position && this.props.position.height ? (
                         <div className='elevation info-box'> 
                             <h6>Elevation:</h6>
                             {this.props.type === 'waypoint' ? (

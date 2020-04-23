@@ -244,8 +244,9 @@ class App extends React.Component{
   }
 
   calculateLegDistance(point1, point2){
-    const from = turf.point([CesiumMath.toDegrees(point1.longitude), CesiumMath.toDegrees(point1.latitude)])
-    const to = turf.point([CesiumMath.toDegrees(point2.longitude), CesiumMath.toDegrees(point2.latitude)])
+    console.log(point1)
+    const from = turf.point([CesiumMath.toDegrees(point1[1]), CesiumMath.toDegrees(point1[0])])
+    const to = turf.point([CesiumMath.toDegrees(point2[1]), CesiumMath.toDegrees(point2[0])])
     return turf.distance(from, to, {units: 'miles'})
   }
 
