@@ -76,6 +76,12 @@ class EntityInfo extends React.Component{
                             <p>{Math.round(this.props.distance*100)*.01} miles</p>
                         </div>
                     ) : ''}
+                    {this.props.position && this.props.position.length ? (
+                        <div className='elevation-profile info-box'>
+                            <h6>Elevation Profile:</h6>
+                            <ElevationProfile positions={this.props.position}/>
+                        </div>
+                    ) : ''}
                 </div>
                 {description}
                 {buttons}

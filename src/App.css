@@ -34,7 +34,7 @@ header {
     display: flex;
     justify-content: space-between;
     background-color: rgba(20, 20 ,20, .6);
-    border: 1px rgba(20, 20 ,20, .6) solid;
+    border-bottom: 1px rgba(255, 255, 255, 0.425) solid;
     padding: 0px 20px;
     width: 100%;
     z-index: 1;

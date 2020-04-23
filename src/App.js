@@ -37,6 +37,7 @@ class App extends React.Component{
     this.displayMessage = this.displayMessage.bind(this)
     this.logout = this.logout.bind(this)
     this.login = this.login.bind(this)
+    this.calculateLegDistance = this.calculateLegDistance.bind(this)
   }
 
   componentDidMount(){
@@ -244,9 +245,16 @@ class App extends React.Component{
   }
 
   calculateLegDistance(point1, point2){
-    console.log(point1)
-    const from = turf.point([CesiumMath.toDegrees(point1[1]), CesiumMath.toDegrees(point1[0])])
-    const to = turf.point([CesiumMath.toDegrees(point2[1]), CesiumMath.toDegrees(point2[0])])
+    let from;
+    let to;
+    if (point1.latitude){
+      from = turf.point([CesiumMath.toDegrees(point1.longitude), CesiumMath.toDegrees(point1.latitude)])
+      to = turf.point([CesiumMath.toDegrees(point2.longitude), CesiumMath.toDegrees(point2.latitude)])  
+    }
+    else{
+      from = turf.point([CesiumMath.toDegrees(point1[1]), CesiumMath.toDegrees(point1[0])])
+      to = turf.point([CesiumMath.toDegrees(point2[1]), CesiumMath.toDegrees(point2[0])])  
+    }
     return turf.distance(from, to, {units: 'miles'})
   }
 
@@ -366,6 +374,7 @@ class App extends React.Component{
         displayMessage: this.displayMessage,
         logout: this.logout,
         login: this.login,
+        calculateLegDistance: this.calculateLegDistance,
       }
     }
     return (
