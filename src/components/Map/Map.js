@@ -10,7 +10,6 @@ import {
             ScreenSpaceEventType, 
             sampleTerrainMostDetailed, 
             Cartographic,
-            Math as CesiumMath
         } from 'cesium'
 import TerraContext from '../../TerraContext'
 import Toolbar from './Toolbar/Toolbar'
