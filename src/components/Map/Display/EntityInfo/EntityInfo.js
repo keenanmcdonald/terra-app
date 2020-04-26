@@ -7,6 +7,10 @@ import {Math as CesiumMath} from 'cesium'
 class EntityInfo extends React.Component{
     static contextType = TerraContext
 
+    componentDidMount(){
+        this.props.requestRender()
+    }
+
     handleDelete(){
         this.context.methods.setMode('')
         this.context.methods.deleteEntity(this.context.selected)

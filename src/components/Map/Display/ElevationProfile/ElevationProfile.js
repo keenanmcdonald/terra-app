@@ -15,7 +15,7 @@ class ElevationProfile extends React.Component{
     }
 
     componentDidMount(){
-        this.parseData()
+        this.parseData(this.props.positions)
     }
 
     parseData(){

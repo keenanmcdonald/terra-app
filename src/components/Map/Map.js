@@ -3,13 +3,16 @@ import { Globe, Viewer, Entity, ScreenSpaceEventHandler, ScreenSpaceEvent } from
 import { 
             PolylineOutlineMaterialProperty,
             PolylineGraphics,
+            PolylinePipeline,
             Color,
             Ion, 
             Cartesian3, 
             createWorldTerrain, 
             ScreenSpaceEventType, 
+            sampleTerrain,
             sampleTerrainMostDetailed, 
             Cartographic,
+
         } from 'cesium'
 import TerraContext from '../../TerraContext'
 import Toolbar from './Toolbar/Toolbar'
@@ -27,6 +30,17 @@ const terrainProvider = createWorldTerrain();
 
 class Map extends React.Component {
     static contextType = TerraContext
+
+    constructor(props){
+        super(props)
+
+        this.sampleHeightsAlongLine = this.sampleHeightsAlongLine.bind(this)
+        this.requestRender = this.requestRender.bind(this)
+
+        this.state = {
+            viewer: this.viewer
+        }
+    }
 
 
     selectRandomElement(views){
@@ -140,6 +154,34 @@ class Map extends React.Component {
         )
     }
 
+/*
+    sampleHeightsAlongLine(positions){
+        console.log('sample heights called')
+        const ellipsoid = this.viewer.scene.globe.ellipsoid;
+        let cartographicArray = []
+
+        for (let i = 1; i < positions.length; i++){
+            let cartesianPositions = Cartesian3.fromDegreesArray([positions[i].longitude, positions[i].latitude, positions[i-1].longitude, positions[i-1].latitude])
+            let flatPositions = PolylinePipeline.generateArc({
+                positions: cartesianPositions,
+                granularity: .01
+            })
+            for (let i = 0; i < flatPositions.length; i+=1){
+                let cartesian = Cartesian3.unpack(flatPositions, i)
+                cartographicArray.push(ellipsoid.cartesianToCartographic(cartesian))
+            }
+        }
+        console.log('cartographic array', cartographicArray)
+
+        return sampleTerrain(terrainProvider, cartographicArray)
+            .then(sampledArray => {
+                console.log(sampledArray)
+                return sampledArray
+            })    
+    }
+    */
+
+
     //handles clicks on the map based on current mode, whether user clicks on an entity or not
     handleClick(event) {
         //console.log(this.viewer.camera)
@@ -213,6 +255,7 @@ class Map extends React.Component {
 
     //rerenders the Cesium map, normally, the map does not render unless the view moves, this method is called when there is a change made to entities displayed on the map
     requestRender(){
+        console.log('this.viewer', this.viewer) 
         if (this.viewer){
             this.viewer.scene.requestRender()
         }
@@ -220,7 +263,8 @@ class Map extends React.Component {
     
     render() {
         const entities = this.drawEntities();
-        const display = ['edit', 'create point', 'create route', 'select'].some(item => item === this.context.mode) ? <Display requestRender={() => this.requestRender()}/> : ''
+        const display = ['edit', 'create point', 'create route', 'select'].some(item => item === this.context.mode) ? 
+            <Display requestRender={() => this.requestRender()}/> : ''
         const message = <MessageDisplay hidden={this.context.message.hidden} text={this.context.message.text}/>
 
         return (
