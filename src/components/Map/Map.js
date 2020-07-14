@@ -34,8 +34,8 @@ class Map extends React.Component {
     constructor(props){
         super(props)
 
-        this.sampleHeightsAlongLine = this.sampleHeightsAlongLine.bind(this)
-        this.requestRender = this.requestRender.bind(this)
+        //this.sampleHeightsAlongLine = this.sampleHeightsAlongLine.bind(this)
+        //this.requestRender = this.requestRender.bind(this)
 
         this.state = {
             viewer: this.viewer
