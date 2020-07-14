@@ -35,6 +35,9 @@ class EntityInfo extends React.Component{
                 </div>
             )
         }
+
+        console.log(this.props)
+        
         return (
             <div className='entity-info'>
                 <div className='name-and-user'>
