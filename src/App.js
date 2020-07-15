@@ -5,8 +5,10 @@ import { hot } from 'react-hot-loader/root'
 import TerraContext from './TerraContext'
 import './App.css'
 import config from './config'
-import {Cartesian3} from 'cesium'
+import {Cartographic} from 'cesium'
 import {withRouter} from 'react-router-dom'
+import * as turf from '@turf/turf'
+import {Math as CesiumMath} from 'cesium'
 
 
 class App extends React.Component{
@@ -35,6 +37,7 @@ class App extends React.Component{
     this.displayMessage = this.displayMessage.bind(this)
     this.logout = this.logout.bind(this)
     this.login = this.login.bind(this)
+    this.calculateLegDistance = this.calculateLegDistance.bind(this)
   }
 
   componentDidMount(){
@@ -89,13 +92,14 @@ class App extends React.Component{
     let newEntities = []
     for (const entity of entities){
       if (entity.type === 'waypoint'){
-        entity.position = new Cartesian3.fromArray(entity.position[0]);
+        entity.position = new Cartographic(entity.position[0][1], entity.position[0][0], entity.position[0][2]);
       } 
       else if (entity.type === 'route'){
         let newPosition = []
         for (const position of entity.position){
-          newPosition.push(new Cartesian3.fromArray(position))
+          newPosition.push(new Cartographic(position[1], position[0], position[2]))
         }
+        entity.distance = this.calculateRouteDistance(entity.position)
         entity.position = newPosition
         entity.saved = true
       }
@@ -140,7 +144,6 @@ class App extends React.Component{
           return res.json()
         })
         .then(resJson => {
-          console.log(resJson)
           const entities = this.parseEntityData(resJson)
           this.setState({entities})
         })
@@ -171,16 +174,11 @@ class App extends React.Component{
   //accepts an entity object as an argument and posts the entity to the server
   uploadEntity(entity){
     let position = []
-    let elevation = []
     if (entity.type === 'waypoint'){
-      position = [[entity.position.x, entity.position.y, entity.position.z]]
-      elevation = [entity.elevation]
+      position = [[entity.position.latitude, entity.position.longitude, entity.position.height]]
     } else if (entity.type === 'route') {
       for (let i = 0; i < entity.position.length; i++){
-        position.push([entity.position[i].x, entity.position[i].y, entity.position[i].z])
-      }
-      for (let i = 0; i < entity.elevation.length; i++){
-        elevation.push(entity.elevation[i])
+        position.push([entity.position[i].latitude, entity.position[i].longitude, entity.position[i].height])
       }
     }
 
@@ -190,7 +188,6 @@ class App extends React.Component{
       user_name: this.state.user.user_name,
       type: entity.type,
       position,
-      elevation,
     }
 
     fetch(`${config.API_ENDPOINT}entities`, {
@@ -209,7 +206,7 @@ class App extends React.Component{
 
   //creates a new waypoint and puts it in the state, does NOT upload to the server
   dropWaypoint(position) {
-    const waypoint = {position: position.cartesian, elevation: position.elevation, name: '', description: '', type: 'waypoint', user_name: this.state.user.user_name, saved: false, id: -1}
+    const waypoint = {position: position, name: '', description: '', type: 'waypoint', user_name: this.state.user.user_name, saved: false, id: -1}
     let entities = this.state.entities
     entities.push(waypoint)
     this.setState({entities, selected: entities.length-1})
@@ -223,20 +220,42 @@ class App extends React.Component{
       this.displayMessage('Click on the map again to draw a line between points', 4000)
       let entities = this.state.entities
       let route = entities[this.state.selected]
-      route.position.push(position.cartesian)
-      route.elevation.push(position.elevation)
+      route.position.push(position)
+      route.distance += this.calculateLegDistance(route.position[route.position.length-1], route.position[route.position.length-2])
       entities.splice(this.state.selected, 1)
       entities.push(route)
       this.setState({entities, selected: entities.length-1})
     }
     else {
       this.displayMessage('Click on the map again to draw a line between points', 4000)
-      let route = {position: [position.cartesian], elevation: [position.elevation], name: '', description: '', type: 'route', user_name: this.state.user.user_name, saved: false, id: -1}
+      let route = {position: [position], name: '', description: '', type: 'route', user_name: this.state.user.user_name, saved: false, id: -1, distance: 0}
       let entities = this.state.entities
       entities.push(route)
       this.setState({entities, selected: entities.length-1})
       this.setMode('create route')
     }
+  }
+
+  calculateRouteDistance(positions){
+    let totalDistance = 0
+    for (let i = 1; i < positions.length; i++){
+      totalDistance += this.calculateLegDistance(positions[i-1], positions[i])
+    }
+    return totalDistance
+  }
+
+  calculateLegDistance(point1, point2){
+    let from;
+    let to;
+    if (point1.latitude){
+      from = turf.point([CesiumMath.toDegrees(point1.longitude), CesiumMath.toDegrees(point1.latitude)])
+      to = turf.point([CesiumMath.toDegrees(point2.longitude), CesiumMath.toDegrees(point2.latitude)])  
+    }
+    else{
+      from = turf.point([CesiumMath.toDegrees(point1[1]), CesiumMath.toDegrees(point1[0])])
+      to = turf.point([CesiumMath.toDegrees(point2[1]), CesiumMath.toDegrees(point2[0])])  
+    }
+    return turf.distance(from, to, {units: 'miles'})
   }
 
   selectEntity(id) {
@@ -355,6 +374,7 @@ class App extends React.Component{
         displayMessage: this.displayMessage,
         logout: this.logout,
         login: this.login,
+        calculateLegDistance: this.calculateLegDistance,
       }
     }
     return (

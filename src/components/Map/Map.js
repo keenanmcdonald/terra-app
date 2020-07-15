@@ -3,11 +3,13 @@ import { Globe, Viewer, Entity, ScreenSpaceEventHandler, ScreenSpaceEvent } from
 import { 
             PolylineOutlineMaterialProperty,
             PolylineGraphics,
+            PolylinePipeline,
             Color,
             Ion, 
             Cartesian3, 
             createWorldTerrain, 
             ScreenSpaceEventType, 
+            sampleTerrain,
             sampleTerrainMostDetailed, 
             Cartographic,
             Math as CesiumMath} from 'cesium'
@@ -27,6 +29,17 @@ const terrainProvider = createWorldTerrain();
 
 class Map extends React.Component {
     static contextType = TerraContext
+
+    constructor(props){
+        super(props)
+
+        //this.sampleHeightsAlongLine = this.sampleHeightsAlongLine.bind(this)
+        //this.requestRender = this.requestRender.bind(this)
+
+        this.state = {
+            viewer: this.viewer
+        }
+    }
 
 
     selectRandomElement(views){
@@ -69,12 +82,13 @@ class Map extends React.Component {
     drawWaypoint(waypoint){
         const pixelSize = waypoint.isSelected ? 16 : 14
         const outlineWidth = waypoint.isSelected ? 2 : 1
+        const cartesian = new Cartesian3.fromRadians(waypoint.position.longitude, waypoint.position.latitude, waypoint.position.height)
 
         return (
             <Entity 
                 key={waypoint.id}
                 id={waypoint.id}
-                position={waypoint.position}
+                position={cartesian}
                 type={'waypoint'}
                 point={{
                     pixelSize,
@@ -90,10 +104,12 @@ class Map extends React.Component {
     drawRoute(route){
         const width = route.isSelected ? 7 : 5
         const outlineWidth = route.isSelected ? 2 : 0
+        const cartesianPositions = []
 
         let joints = [];
         for (let i = 0; i < route.position.length; i++){
             const isEndpoint = (i === 0 || i === route.position.length-1)
+            cartesianPositions.push(new Cartesian3.fromRadians(route.position[i].longitude, route.position[i].latitude, route.position[i].height))
             const pixelSize = route.isSelected ? (isEndpoint ? 12 : 8) : (isEndpoint ? 10 : 8)
             joints.push(
                 <Entity
@@ -101,7 +117,7 @@ class Map extends React.Component {
                     id={`r${route.id}j${i}`}
                     isEndpoint={isEndpoint}
                     type={'joint'}
-                    position={route.position[i]}
+                    position={cartesianPositions[i]}
                     point={{
                         pixelSize,
                         color: route.color,
@@ -118,9 +134,9 @@ class Map extends React.Component {
                     key={route.id}
                     id={route.id}
                     type={'polyline'}
-                    position={route.position[0]}
+                    position={cartesianPositions[0]}
                     polyline={new PolylineGraphics({
-                        positions: route.position,
+                        positions: cartesianPositions,
                         width,
                         clampToGround: true,
                         material: new PolylineOutlineMaterialProperty({
@@ -136,6 +152,34 @@ class Map extends React.Component {
             </div>
         )
     }
+
+/*
+    sampleHeightsAlongLine(positions){
+        console.log('sample heights called')
+        const ellipsoid = this.viewer.scene.globe.ellipsoid;
+        let cartographicArray = []
+
+        for (let i = 1; i < positions.length; i++){
+            let cartesianPositions = Cartesian3.fromDegreesArray([positions[i].longitude, positions[i].latitude, positions[i-1].longitude, positions[i-1].latitude])
+            let flatPositions = PolylinePipeline.generateArc({
+                positions: cartesianPositions,
+                granularity: .01
+            })
+            for (let i = 0; i < flatPositions.length; i+=1){
+                let cartesian = Cartesian3.unpack(flatPositions, i)
+                cartographicArray.push(ellipsoid.cartesianToCartographic(cartesian))
+            }
+        }
+        console.log('cartographic array', cartographicArray)
+
+        return sampleTerrain(terrainProvider, cartographicArray)
+            .then(sampledArray => {
+                console.log(sampledArray)
+                return sampledArray
+            })    
+    }
+    */
+
 
     //handles clicks on the map based on current mode, whether user clicks on an entity or not
     handleClick(event) {
@@ -192,11 +236,16 @@ class Map extends React.Component {
         console.log('cartographic presample: ', cartographic)
         console.log('longitude: ', CesiumMath.toDegrees(cartographic.latitude))
         let sampledArray = await sampleTerrainMostDetailed(terrainProvider, [cartographic])
+<<<<<<< HEAD
         cartographic = sampledArray[0]
         console.log('cartographic post sample: ', cartographic)
         const elevation = Math.round(cartographic.height * 3.28084) //converting meters to feet
         cartesian = new Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, cartographic.height)
         return {cartesian, elevation}
+=======
+        const position = sampledArray[0]
+        return position
+>>>>>>> route-distance-feature
     }
 
     //turns the cursor to a pointer when hovering over an entity
@@ -215,6 +264,7 @@ class Map extends React.Component {
 
     //rerenders the Cesium map, normally, the map does not render unless the view moves, this method is called when there is a change made to entities displayed on the map
     requestRender(){
+        console.log('this.viewer', this.viewer) 
         if (this.viewer){
             this.viewer.scene.requestRender()
         }
@@ -222,7 +272,8 @@ class Map extends React.Component {
     
     render() {
         const entities = this.drawEntities();
-        const display = ['edit', 'create point', 'create route', 'select'].some(item => item === this.context.mode) ? <Display requestRender={() => this.requestRender()}/> : ''
+        const display = ['edit', 'create point', 'create route', 'select'].some(item => item === this.context.mode) ? 
+            <Display requestRender={() => this.requestRender()}/> : ''
         const message = <MessageDisplay hidden={this.context.message.hidden} text={this.context.message.text}/>
 
         return (
