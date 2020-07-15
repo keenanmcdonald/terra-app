@@ -236,16 +236,8 @@ class Map extends React.Component {
         console.log('cartographic presample: ', cartographic)
         console.log('longitude: ', CesiumMath.toDegrees(cartographic.latitude))
         let sampledArray = await sampleTerrainMostDetailed(terrainProvider, [cartographic])
-<<<<<<< HEAD
-        cartographic = sampledArray[0]
-        console.log('cartographic post sample: ', cartographic)
-        const elevation = Math.round(cartographic.height * 3.28084) //converting meters to feet
-        cartesian = new Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, cartographic.height)
-        return {cartesian, elevation}
-=======
         const position = sampledArray[0]
         return position
->>>>>>> route-distance-feature
     }
 
     //turns the cursor to a pointer when hovering over an entity
