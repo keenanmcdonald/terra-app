@@ -20,7 +20,6 @@ class EntityInfo extends React.Component{
     numberWithCommas(num) {
         return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
-    
 
     render(){
         let description;
