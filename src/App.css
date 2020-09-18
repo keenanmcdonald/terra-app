@@ -148,6 +148,11 @@ input, textarea {
      color: red;
      width: 130px;
  }
+ .loader-container{
+     width: 100%;
+     text-align: center;
+     margin-top: 12px;
+ }
  
 
 /*LandingPage*/

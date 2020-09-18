@@ -2,6 +2,7 @@ import React from 'react'
 import config from '../../../../config'
 import AuthApiService from '../../../../services/auth-api-service'
 import TerraContext from '../../../../TerraContext'
+import BarLoader from 'react-spinners/BarLoader'
 
 const REGEX_UPPER_LOWER_NUMBER = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[\S]+/
 // eslint-disable-next-line
@@ -30,6 +31,7 @@ class SignupForm extends React.Component{
                 touched: false,
             },
             error: '',
+            loading: false,
         }
     }
 
@@ -99,6 +101,8 @@ class SignupForm extends React.Component{
             password: this.state.password.value,
         }
 
+        this.setState({loading: true})
+
         AuthApiService.postUser(user)
             .then(res => {
                 if (!res.ok){
@@ -106,6 +110,7 @@ class SignupForm extends React.Component{
                 }
                 AuthApiService.postLogin({email: user.email, password: user.password})
                     .then(res => {
+                        this.setState({loading: false})
                         window.localStorage.setItem(config.TOKEN_KEY, res.authToken)
                         this.context.methods.login(res.user)
                         this.props.history.push('/')
@@ -154,6 +159,15 @@ class SignupForm extends React.Component{
                     >
                         Sign up
                     </button>
+                    <div className='loader-container'>
+                        <BarLoader
+                            color={'#FFFFFF'}
+                            loading={this.state.loading}
+                            css={`
+                            width: 100%;
+                            `}
+                        />
+                    </div>
                     <p className='error'>{this.state.error}</p> 
                 </form> 
             </div>

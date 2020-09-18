@@ -2,6 +2,7 @@ import React from 'react'
 import config from '../../../../config'
 import AuthApiService from '../../../../services/auth-api-service'
 import TerraContext from '../../../../TerraContext'
+import BarLoader from 'react-spinners/BarLoader'
 
 // eslint-disable-next-line
 const REGEX_EMAIL_VALIDATION = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -23,6 +24,7 @@ class LoginForm extends React.Component{
             },
             staySignedIn: false,
             error: '',
+            loading: false,
         }
     }
 
@@ -58,9 +60,11 @@ class LoginForm extends React.Component{
             password: this.state.password.value,
         }
 
+        this.setState({loading: true})
+
         AuthApiService.postLogin(credentials)
             .then(res => {
-                this.setState({error: ''})
+                this.setState({error: '', loading: false})
                 window.localStorage.setItem(config.TOKEN_KEY, res.authToken)
                 if(this.state.staySignedIn){
                     let expiryDate = new Date()
@@ -73,7 +77,6 @@ class LoginForm extends React.Component{
             .catch(res => {
                 this.setState({error: 'something went wrong, check that username and password is correct and please try again'})
             })
-        
     }
     render(){
         return (
@@ -102,6 +105,15 @@ class LoginForm extends React.Component{
                     >
                         Login
                     </button>
+                    <div className='loader-container'>
+                        <BarLoader
+                            color={'#FFFFFF'}
+                            loading={this.state.loading}
+                            css={`
+                            width: 100%;
+                            `}
+                        />
+                    </div>
                     <p className='error'>{this.state.error}</p> 
                 </form> 
             </div>
