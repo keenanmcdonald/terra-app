@@ -23,6 +23,7 @@ import MessageDisplay from './MessageDisplay/MessageDisplay'
 import LandingPage from './Pages/LandingPage/LandingPage'
 import ErrorBoundary from './ErrorBoundary'
 
+console.log(process.env.REACT_APP_CESIUM_ACCESS_KEY)
 Ion.defaultAccessToken = process.env.REACT_APP_CESIUM_ACCESS_KEY
 
 const terrainProvider = createWorldTerrain();
@@ -233,8 +234,6 @@ class Map extends React.Component {
     async getClickPosition(mousePosition, scene){
         let cartesian = scene.pickPosition(mousePosition)
         let cartographic = Cartographic.fromCartesian(cartesian);
-        console.log('cartographic presample: ', cartographic)
-        console.log('longitude: ', CesiumMath.toDegrees(cartographic.latitude))
         let sampledArray = await sampleTerrainMostDetailed(terrainProvider, [cartographic])
         const position = sampledArray[0]
         return position
@@ -256,7 +255,6 @@ class Map extends React.Component {
 
     //rerenders the Cesium map, normally, the map does not render unless the view moves, this method is called when there is a change made to entities displayed on the map
     requestRender(){
-        console.log('this.viewer', this.viewer) 
         if (this.viewer){
             this.viewer.scene.requestRender()
         }
