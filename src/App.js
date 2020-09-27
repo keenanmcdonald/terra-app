@@ -9,6 +9,7 @@ import {Cartographic} from 'cesium'
 import {withRouter} from 'react-router-dom'
 import * as turf from '@turf/turf'
 import {Math as CesiumMath} from 'cesium'
+import SidePanel from './components/SidePanel/SidePanel'
 
 
 class App extends React.Component{
@@ -19,6 +20,7 @@ class App extends React.Component{
       entities:[],
       selected: -1,
       loadForeignEntities: false,
+      flyToSelected: false,
       mode: '',
       user: undefined,
       message: {text: '', hidden: true, timeoutId: undefined},
@@ -38,6 +40,7 @@ class App extends React.Component{
     this.logout = this.logout.bind(this)
     this.login = this.login.bind(this)
     this.calculateLegDistance = this.calculateLegDistance.bind(this)
+    this.cancelFlyTo = this.cancelFlyTo.bind(this)
   }
 
   componentDidMount(){
@@ -258,14 +261,17 @@ class App extends React.Component{
     return turf.distance(from, to, {units: 'miles'})
   }
 
-  selectEntity(id) {
-    const length = this.state.entities.length
-    for (let i=0; i < length; i++){
+  selectEntity(id, flyTo=false) {
+    for (let i=0; i < this.state.entities.length; i++){
       if (id === this.state.entities[i].id){
-        this.setState({selected: i})
+        this.setState({selected: i, flyToSelected: flyTo})
       }
     }
     this.setMode('select')
+  }
+
+  cancelFlyTo(){
+    this.setState({flyToSelected: false})
   }
 
   //called when the 'add' button is pressed while creating or editing an entity
@@ -375,6 +381,7 @@ class App extends React.Component{
         logout: this.logout,
         login: this.login,
         calculateLegDistance: this.calculateLegDistance,
+        cancelFlyTo: this.cancelFlyTo,
       }
     }
     return (
@@ -382,7 +389,8 @@ class App extends React.Component{
         <TerraContext.Provider value={contextValue}>
         <Header />
           <main>
-              <Map displaySearchButton={this.state.displaySearchButton}/>
+              <Map displaySearchButton={this.state.displaySearchButton} flyTo={this.state.flyToSelected}/>
+              <SidePanel/>
           </main>
         </TerraContext.Provider>
       </div>

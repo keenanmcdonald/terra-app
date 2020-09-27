@@ -36,7 +36,7 @@ header {
     background-color: rgba(20, 20 ,20, .6);
     border-bottom: 1px rgba(255, 255, 255, 0.425) solid;
     padding: 0px 20px;
-    width: 100%;
+    width: 70vw;
     z-index: 1;
     color: white;
     height: 54px;
@@ -68,7 +68,8 @@ h5{
     margin-top: 4px;
 }
 h6, .edit-entity-form label{
-    font-size: 12px;
+    font-size: 10px;
+    color: rgb(230,230,230)
 }
 button{
     border: solid white 1px;
@@ -84,6 +85,13 @@ button{
 button:hover{
     background-color: rgba(100, 149, 237, .3)
 }
+button.delete{
+    /*background-color: rgba(255, 0, 0, 0.5)*/
+}
+button.delete:hover{
+    background-color: rgba(255, 0, 0, 0.5)
+}
+
 button.disabled{
     color: grey;
     border-color: grey;
@@ -93,6 +101,7 @@ button.disabled:hover{
 }
 label {
     display: block;
+    margin: 2px 0;
 }
 input, textarea {
     margin: 4px;
@@ -122,6 +131,46 @@ input, textarea {
     cursor: pointer;
 }
 
+/*SidePanel*/
+
+div.side-panel{
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    height: 100vh;
+    width: 30vw;
+    background-color: rgb(20,20,20);
+    z-index: 1000;
+    margin: 0;
+    transition: 0.5s;
+    color: white;
+    border-left: white solid 1px;
+}
+
+ul.entity-list{
+    height: 30vh;
+    border: black solid 1px;
+    width: 100%;
+    margin: 0;
+    overflow-Y: scroll;
+}
+
+.entity-list li{
+    display: block;
+    transition-duration: 0.3s;
+}
+.entity-list li:hover{
+    background-color: rgb(100, 149, 237, 0.5);
+    cursor: pointer;
+}
+
+.entity-list li.selected{
+    background-color: rgb(100, 149, 237, 0.9);
+}
+
+.entity-info{
+    overflow: scroll;
+}
 
 /*Pages*/
 .page-backdrop{
@@ -173,34 +222,6 @@ input, textarea {
 }
 
 /*Display*/
-.display{
-    color: white;
-    border: solid rgba(255, 255, 255, .8) 1px;
-    border-radius: 5px;
-    background-color: rgba(20, 20 ,20, .6);
-    backdrop-filter: blur(5px);
-    padding: 10px;
-    position: absolute;
-    width: 60%;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    bottom: 20px;
-    opacity: 1;
-    transition: opacity 2s linear;
-    z-index: 3;
-}
-.display *{
-    color: white;
-}
-.display input#name{
-    width: 50%;
-    max-width: 250px;
-}
-.display textarea#description{
-    width: 90%;
-    height: 50px;
-}
 .edit-entity-form{
     display: flex;
     flex-wrap: wrap;
@@ -216,25 +237,19 @@ textarea#description{
     height: 80px;
     width: 250px;
     resize: none;
-
-}
-.entity-info .name-and-user{
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
 }
 .info-box{
-    border-top: rgba(255, 255, 255, .6) 1px solid;
     margin: 8px;
 }
 .display-buttons{
     width: 100%;
-    text-align: center;
 }
 .display-buttons button{
-    display: inline-block;
+    display: block;
     margin-left: 0px;
     margin-right: 6px;
+    width: 100%;
+    border: none;
 }
 
 
@@ -278,6 +293,7 @@ button.disabled.toolbar-button:hover{
 /*Login*/
 label.stay-signed-in{
     display: inline-block;
+    margin: 4px 2px;
 }
 .map-container{
     height: 300px;
@@ -288,7 +304,10 @@ label.stay-signed-in{
 /*Map*/
 .cesium-widget{
     height: 100vh;
+    width: 70vw;
+    transition-duration: 0.5s;
 }
+
 
 /*Message*/
 .message-container{

@@ -3,16 +3,19 @@ import { Globe, Viewer, Entity, ScreenSpaceEventHandler, ScreenSpaceEvent } from
 import { 
             PolylineOutlineMaterialProperty,
             PolylineGraphics,
-            PolylinePipeline,
+            //PolylinePipeline,
             Color,
             Ion, 
             Cartesian3, 
             createWorldTerrain, 
             ScreenSpaceEventType, 
-            sampleTerrain,
+            //sampleTerrain,
             sampleTerrainMostDetailed, 
             Cartographic,
-            Math as CesiumMath} from 'cesium'
+            Rectangle,
+            HeadingPitchRange,
+            Math as CesiumMath
+        } from 'cesium'
 import TerraContext from '../../TerraContext'
 import Toolbar from './Toolbar/Toolbar'
 import Display from './Display/Display'
@@ -23,7 +26,6 @@ import MessageDisplay from './MessageDisplay/MessageDisplay'
 import LandingPage from './Pages/LandingPage/LandingPage'
 import ErrorBoundary from './ErrorBoundary'
 
-console.log(process.env.REACT_APP_CESIUM_ACCESS_KEY)
 Ion.defaultAccessToken = process.env.REACT_APP_CESIUM_ACCESS_KEY
 
 const terrainProvider = createWorldTerrain();
@@ -253,6 +255,24 @@ class Map extends React.Component {
         }
     }
 
+    flyToSelected(){
+        console.log(this.context.entities[this.context.selected])
+        let position=(this.context.entities[this.context.selected].position)
+
+        if (position.length) {
+            position = position[Math.floor(position.length/2)]
+        }
+        
+        //const cameraHeight = this.viewer.camera.positionCartographic.height
+        
+
+        this.viewer.camera.flyTo({
+            destination: Cartesian3.fromRadians(position.longitude, position.latitude, position.height+10000),
+            duration: 2.0,
+        })
+        this.context.methods.cancelFlyTo()
+    }
+
     //rerenders the Cesium map, normally, the map does not render unless the view moves, this method is called when there is a change made to entities displayed on the map
     requestRender(){
         if (this.viewer){
@@ -262,9 +282,11 @@ class Map extends React.Component {
     
     render() {
         const entities = this.drawEntities();
-        const display = ['edit', 'create point', 'create route', 'select'].some(item => item === this.context.mode) ? 
-            <Display requestRender={() => this.requestRender()}/> : ''
         const message = <MessageDisplay hidden={this.context.message.hidden} text={this.context.message.text}/>
+
+        if (this.context.flyToSelected){
+            this.flyToSelected()
+        }
 
         return (
             <div className='map-container'>
@@ -289,7 +311,6 @@ class Map extends React.Component {
                         <Globe depthTestAgainstTerrain={true}>
                             {message}
                             {entities}
-                            {display}
                             <Toolbar/>
                             <ScreenSpaceEventHandler>
                                 <ScreenSpaceEvent action={e => this.handleClick(e)} type={ScreenSpaceEventType.LEFT_CLICK} />
