@@ -12,6 +12,7 @@ function EntityList(props){
                 className={key===props.selected ? 'selected': ''}
                 onClick={() => props.selectEntity(entity.id, true)}
             >
+                <img className='list-icon' src={entity.type==='waypoint' ? './waypoint.png' : './route.png'} alt='waypoint icon'/>
                     {entity.name}
             </li>)
         key += 1

@@ -25,6 +25,9 @@ time, mark, audio, video {
 }
 
 /*-----------------------------*/
+body{
+    background: rgb(20,20,20);
+}
 *{
     box-sizing: border-box;
     font-family: 'Montserrat', sans-serif;
@@ -33,14 +36,14 @@ header {
     position: absolute;
     display: flex;
     justify-content: space-between;
-    background-color: rgba(20, 20 ,20, .6);
-    border-bottom: 1px rgba(255, 255, 255, 0.425) solid;
+    background-color: rgba(20, 20 ,20);
+    border-bottom: 1px rgba(255, 255, 255, 0.4) solid;
     padding: 0px 20px;
-    width: 70vw;
+    width: 100%;
     z-index: 1;
     color: white;
-    height: 54px;
-    backdrop-filter: blur(5px);
+    height: 50px;
+    /*backdrop-filter: blur(5px);*/
 }
 h1 {
     font-family: 'Montserrat', sans-serif;
@@ -136,23 +139,32 @@ input, textarea {
 div.side-panel{
     position: absolute;
     right: 0px;
-    top: 0px;
-    height: 100vh;
+    top: 50px;
+    max-height: Calc(100vh - 50px);
     width: 30vw;
     background-color: rgb(20,20,20);
     z-index: 1000;
     margin: 0;
     transition: 0.5s;
     color: white;
-    border-left: white solid 1px;
+    border-left: 1px rgba(255, 255, 255, 0.4) solid;
+}
+
+div.side-panel.collapsed{
+    width: 0;
 }
 
 ul.entity-list{
-    height: 30vh;
+    height: 25vh;
     border: black solid 1px;
     width: 100%;
     margin: 0;
-    overflow-Y: scroll;
+    overflow-y: scroll;
+}
+
+img.list-icon{
+    width: 12px;
+    margin: 0 4px;
 }
 
 .entity-list li{
@@ -169,7 +181,9 @@ ul.entity-list{
 }
 
 .entity-info{
-    overflow: scroll;
+    height: Calc(75vh - 50px);
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 /*Pages*/
@@ -263,7 +277,7 @@ textarea#description{
     height: 32px;
     width: 32px;
     padding-top: 5px;
-    background-color: rgba(20, 20 ,20, .6);
+    background-color: rgba(20, 20 ,20, .8);
     backdrop-filter: blur(5px);
 }
 button.selected{
@@ -306,6 +320,10 @@ label.stay-signed-in{
     height: 100vh;
     width: 70vw;
     transition-duration: 0.5s;
+}
+
+.cesium-widget.no-panel{
+    width: 100vw;
 }
 
 
