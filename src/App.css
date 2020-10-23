@@ -37,7 +37,7 @@ header {
     display: flex;
     justify-content: space-between;
     background-color: rgba(20, 20 ,20);
-    border-bottom: 1px rgba(255, 255, 255, 0.4) solid;
+    border-bottom: 1px rgba(255, 255, 255, 0.6) solid;
     padding: 0px 20px;
     width: 100%;
     z-index: 1;
@@ -140,6 +140,7 @@ div.side-panel{
     position: absolute;
     right: 0px;
     top: 50px;
+    height: Calc(100vh - 50px);
     max-height: Calc(100vh - 50px);
     width: 30vw;
     background-color: rgb(20,20,20);
@@ -147,7 +148,9 @@ div.side-panel{
     margin: 0;
     transition: 0.5s;
     color: white;
-    border-left: 1px rgba(255, 255, 255, 0.4) solid;
+    border-left: 1px rgba(255, 255, 255, 0.6) solid;
+    display: flex;
+    flex-direction: column;
 }
 
 div.side-panel.collapsed{
@@ -156,10 +159,11 @@ div.side-panel.collapsed{
 
 ul.entity-list{
     height: 25vh;
-    border: black solid 1px;
+    border-bottom: rgba(255, 255, 255, 0.6) solid 1px;
     width: 100%;
     margin: 0;
-    overflow-y: scroll;
+    overflow-y: auto;
+    resize: vertical;
 }
 
 img.list-icon{
@@ -181,14 +185,14 @@ img.list-icon{
 }
 
 .entity-info{
-    height: Calc(75vh - 50px);
     overflow-y: scroll;
-    overflow-x: hidden;
+    flex-grow: 1;
 }
 
 div.side-panel button{
     margin: 0;
     padding: 8px;
+    border-radius: 0;
 }
 
 /*Pages*/
