@@ -38,10 +38,10 @@ class ElevationProfile extends React.Component{
         return (
             <div className='elevation-profile-container'>
                 {this.state.data.length ? (
-                <ScatterChart width={400} height={150} margin={{top: 20,left: 10}}>
+                <ScatterChart width={340} height={150} margin={{top: 20,left: -20}}>
                     <Scatter name="elevation" data={this.state.data} fill="#FFFFFF" line={true}/>
-                    <XAxis dataKey='distance' type='number' allowDecimals={false} unit='mi'name='distance' domain={[0, Math.ceil(this.state.data[this.state.data.length-1].distance)]} stroke="#FFFFFF"/>
-                    <YAxis dataKey='elevation' type='number' name='elevation' unit='ft' domain={[this.state.minHeight, this.state.maxHeight]} stroke="#FFFFFF"/>
+                    <XAxis tick={{fontSize: 8}} dataKey='distance' type='number' allowDecimals={false} unit='mi' name='distance' domain={[0, Math.ceil(this.state.data[this.state.data.length-1].distance)]} stroke="#FFFFFF"/>
+                    <YAxis tick={{fontSize: 8}} dataKey='elevation' type='number' name='elevation' unit='ft' domain={[this.state.minHeight, this.state.maxHeight]} stroke="#FFFFFF"/>
                 </ScatterChart>
                 ): ''}
             </div>

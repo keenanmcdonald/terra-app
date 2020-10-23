@@ -186,6 +186,11 @@ img.list-icon{
     overflow-x: hidden;
 }
 
+div.side-panel button{
+    margin: 0;
+    padding: 8px;
+}
+
 /*Pages*/
 .page-backdrop{
     position: absolute;
