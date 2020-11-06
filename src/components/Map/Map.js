@@ -26,6 +26,8 @@ import MessageDisplay from './MessageDisplay/MessageDisplay'
 import LandingPage from './Pages/LandingPage/LandingPage'
 import ErrorBoundary from './ErrorBoundary'
 
+console.log('key: ', process.env.REACT_APP_CESIUM_ACCESS_KEY)
+
 Ion.defaultAccessToken = process.env.REACT_APP_CESIUM_ACCESS_KEY
 
 const terrainProvider = createWorldTerrain();
