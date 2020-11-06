@@ -234,8 +234,6 @@ class Map extends React.Component {
             position = position[Math.floor(position.length/2)]
         }
 
-        console.log(position)
-
         this.viewer.camera.flyTo({
             destination: Cartesian3.fromRadians(position.longitude, position.latitude, position.height+10000),
             duration: 2.0,

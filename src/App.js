@@ -216,7 +216,6 @@ class App extends React.Component{
         body: JSON.stringify(data)
       })
         .then(res => {
-          console.log('update: ', res)
         })
   }
 

@@ -279,7 +279,7 @@ textarea#description{
 /*Toolbar*/
 .toolbar{
     position: absolute;
-    top: 61px;
+    top: 54px;
     left: 4px;
 }
 .toolbar-button{
@@ -364,7 +364,7 @@ label.stay-signed-in{
 
 /*Cesium Search Bar*/
 .cesium-viewer-toolbar{
-    margin-top: 60px;
+    margin-top: 54px;
 }
 .cesium-geocoder-input{
     border-radius: 4px !important; 
