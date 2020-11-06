@@ -1,6 +1,7 @@
 import React from 'react'
 import ToolbarButton from './ToolbarButton/ToolbarButton'
 import TerraContext from '../../../TerraContext'
+import {Cartographic} from 'cesium'
 
 class Toolbar extends React.Component{
     static contextType = TerraContext
@@ -12,6 +13,13 @@ class Toolbar extends React.Component{
         else{
             this.context.methods.setMode(mode, message)
         }
+    }
+
+    findCurrentLocation(){
+        navigator.geolocation.getCurrentPosition(location => {
+            const position = Cartographic.fromDegrees(location.coords.longitude, location.coords.latitude)
+            this.props.flyTo(position)
+        })
     }
 
     render(){
@@ -42,6 +50,14 @@ class Toolbar extends React.Component{
                     selected={this.context.loadForeignEntities}
                     clickFunction={() => this.context.methods.toggleLoadForeignEntities()}
                     iconUrl='./internet.png'
+                />
+                <ToolbarButton
+                    className='current-location-button'
+                    name={`Current location`}
+                    enabled={navigator.geolocation}
+                    selected={this.context.currentLocation}
+                    clickFunction={() => this.findCurrentLocation()}
+                    iconUrl='./current_location.png'
                 />
             </div>
         )

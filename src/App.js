@@ -21,7 +21,7 @@ class App extends React.Component{
       selected: -1,
       loadForeignEntities: false,
       flyToSelected: false,
-      mode: '',
+      mode: '', //edit, select, create point, create route,
       user: undefined,
       message: {text: '', hidden: true, timeoutId: undefined},
     }
@@ -206,6 +206,20 @@ class App extends React.Component{
       })
   }
 
+  updateEntity(id, data){
+      fetch(`${config.API_ENDPOINT}entities/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'content-type': 'application/json',
+          'authorization': `bearer ${window.localStorage.getItem(config.TOKEN_KEY)}`,
+        },
+        body: JSON.stringify(data)
+      })
+        .then(res => {
+          console.log('update: ', res)
+        })
+  }
+
 
   //creates a new waypoint and puts it in the state, does NOT upload to the server
   dropWaypoint(position) {
@@ -277,13 +291,18 @@ class App extends React.Component{
   //called when the 'add' button is pressed while creating or editing an entity
   saveSelected(e, name, description){
     e.preventDefault()
+
     let entity = this.state.entities[this.state.selected]
+
     entity.name = name
     entity.description = description
+
     if (this.state.mode === 'edit'){
-      this.deleteEntity(this.state.selected)
+      this.updateEntity(entity.id, {name, description})
     }
-    this.uploadEntity(entity)
+    else if (this.state.mode === 'create point' && this.state.mode === 'create route'){
+      this.uploadEntity(entity)
+    }
 
     this.setMode('select')
   }

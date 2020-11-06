@@ -156,34 +156,6 @@ class Map extends React.Component {
         )
     }
 
-/*
-    sampleHeightsAlongLine(positions){
-        console.log('sample heights called')
-        const ellipsoid = this.viewer.scene.globe.ellipsoid;
-        let cartographicArray = []
-
-        for (let i = 1; i < positions.length; i++){
-            let cartesianPositions = Cartesian3.fromDegreesArray([positions[i].longitude, positions[i].latitude, positions[i-1].longitude, positions[i-1].latitude])
-            let flatPositions = PolylinePipeline.generateArc({
-                positions: cartesianPositions,
-                granularity: .01
-            })
-            for (let i = 0; i < flatPositions.length; i+=1){
-                let cartesian = Cartesian3.unpack(flatPositions, i)
-                cartographicArray.push(ellipsoid.cartesianToCartographic(cartesian))
-            }
-        }
-        console.log('cartographic array', cartographicArray)
-
-        return sampleTerrain(terrainProvider, cartographicArray)
-            .then(sampledArray => {
-                console.log(sampledArray)
-                return sampledArray
-            })    
-    }
-    */
-
-
     //handles clicks on the map based on current mode, whether user clicks on an entity or not
     handleClick(event) {
         //console.log(this.viewer.camera)
@@ -255,16 +227,14 @@ class Map extends React.Component {
         }
     }
 
-    flyToSelected(){
-        console.log(this.context.entities[this.context.selected])
-        let position=(this.context.entities[this.context.selected].position)
+    flyTo(position){
 
+        //if position is a route, choose the point in the middle of the route
         if (position.length) {
             position = position[Math.floor(position.length/2)]
         }
-        
-        //const cameraHeight = this.viewer.camera.positionCartographic.height
-        
+
+        console.log(position)
 
         this.viewer.camera.flyTo({
             destination: Cartesian3.fromRadians(position.longitude, position.latitude, position.height+10000),
@@ -285,7 +255,7 @@ class Map extends React.Component {
         const message = <MessageDisplay hidden={this.context.message.hidden} text={this.context.message.text}/>
 
         if (this.context.flyToSelected){
-            this.flyToSelected()
+            this.flyTo(this.context.entities[this.context.selected].position)
         }
 
         return (
@@ -311,7 +281,7 @@ class Map extends React.Component {
                         <Globe depthTestAgainstTerrain={true}>
                             {message}
                             {entities}
-                            <Toolbar/>
+                            <Toolbar flyTo={(position) => this.flyTo(position)}/>
                             <ScreenSpaceEventHandler>
                                 <ScreenSpaceEvent action={e => this.handleClick(e)} type={ScreenSpaceEventType.LEFT_CLICK} />
                                 <ScreenSpaceEvent action={e => this.handleHover(e)} type={ScreenSpaceEventType.MOUSE_MOVE}/>
