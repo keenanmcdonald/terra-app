@@ -228,6 +228,10 @@ div.side-panel button{
  
 
 /*LandingPage*/
+.landing-page{
+    width: 70vw;
+    position: fixed;
+}
 .landing-page span{
     font-weight: 900;
 }
@@ -238,7 +242,7 @@ div.side-panel button{
     margin-top: 4px;
 }
 .landing-page-buttons{
-    margin-top: 10px;
+    margin-top: 40px;
 }
 .landing-page-buttons button{
     display: inline-block;
