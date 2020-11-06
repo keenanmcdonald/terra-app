@@ -10,7 +10,7 @@ Use the toolbar to select a waypoint or route tool and to toggle whether you'd l
 Click on a route or waypoint to see the name and description associated with it.
 
 ### Live App
-https://terra-app-omega-lac.now.sh
+https://terra-app1.herokuapp.com/
 
 ### API Repo
 https://github.com/keenanmcdonald/terra-server
