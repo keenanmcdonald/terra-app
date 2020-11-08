@@ -426,21 +426,10 @@ label.stay-signed-in{
     input, p, textarea{
         font-size: 16px;
     }
-    .display {
-        width: 85%;
-        bottom: 34px;
-    }
-    .form-display {
-        height: 45%;
-        width: 90%;
-        margin-left: 5%;
-        margin-right: 5%;    
-    }
     .message-container{
         font-size: 10px;
         top: 38px;
     }
-
     div.side-panel{
         width: 100%;
         height: 40%;
@@ -450,8 +439,12 @@ label.stay-signed-in{
     }
     .cesium-widget{
         width: 100%;
-        height: 60vh - 50px;
+        height: 60vh;
     }
+    .map-container.no-panel .cesium-widget{
+        height: 100vh;
+    }
+    
     .cesium-viewer-geocoderContainer{
         margin-right: 2px;
     }
