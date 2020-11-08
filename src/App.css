@@ -367,7 +367,7 @@ label.stay-signed-in{
 
 /*Cesium Search Bar*/
 .cesium-viewer-toolbar{
-    margin-top: 54px;
+    margin-top: 52px;
 }
 .cesium-geocoder-input{
     border-radius: 4px !important; 
@@ -385,13 +385,12 @@ label.stay-signed-in{
     background-color: transparent !important;
 }
 
-
 .cesium-viewer-geocoderContainer{
-    margin-right: 30vw;
+    margin-right: Calc(30vw + 2px);
 }
 
 .map-container.no-panel .cesium-viewer-geocoderContainer{
-    margin-right: 2px;
+    margin-right: 4px;
 }
 
 /* Tooltip container */
@@ -446,7 +445,7 @@ label.stay-signed-in{
     }
     
     .cesium-viewer-geocoderContainer{
-        margin-right: 2px;
+        margin-right: 4px;
     }
     
 }

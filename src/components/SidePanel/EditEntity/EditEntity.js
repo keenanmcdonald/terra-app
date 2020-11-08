@@ -10,6 +10,7 @@ class EditEntity extends React.Component{
         this.state = {
             name: this.props.name,
             description: this.props.description,
+            private: this.props.private,
         }
     }
 
@@ -19,6 +20,11 @@ class EditEntity extends React.Component{
 
     updateDescription(description){
         this.setState({description: description})
+    }
+
+    togglePrivate(){
+        this.setState({private: !this.state.private})
+        console.log(this.state)
     }
 
     handleCancel(){
@@ -40,8 +46,12 @@ class EditEntity extends React.Component{
                     <label htmlFor='description'>Description: </label>
                     <textarea name='description' id='description' type='text' rows='3' defaultValue={this.props.description} onChange={e => this.updateDescription(e.target.value)}/>
                 </div>
+                <div>
+                    <label htmlFor='private'>Private: </label>
+                    <input name='private' id='private' type='checkbox' defaultChecked={this.state.private} onChange={() => this.togglePrivate()}/>
+                </div>
                 <div className='display-buttons'>
-                    <button id='submit' className={allowAdd ? '' : 'disabled'} type='submit' onClick={e => this.context.methods.saveSelected(e, this.state.name, this.state.description)} disabled={!allowAdd}>
+                    <button id='submit' className={allowAdd ? '' : 'disabled'} type='submit' onClick={e => this.context.methods.saveSelected(e, this.state.name, this.state.description, this.state.private)} disabled={!allowAdd}>
                         Save
                     </button>
                     <button id='cancel' type='button' onClick={() => this.handleCancel()}>

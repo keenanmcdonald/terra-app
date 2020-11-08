@@ -82,6 +82,10 @@ class EntityInfo extends React.Component{
                             <ElevationProfile positions={this.props.position}/>
                         </div>
                     ) : ''}
+                    <div className='sharing-status info-box'>
+                        <h6>Sharing Status:</h6>
+                        <p>{this.props.private ? 'Private (only you can see this)' : 'Public (other users can see this)'}</p>
+                    </div>
                 </div>
                 {description}
                 {buttons}

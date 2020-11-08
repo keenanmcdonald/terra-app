@@ -287,16 +287,17 @@ class App extends React.Component{
   }
 
   //called when the 'add' button is pressed while creating or editing an entity
-  saveSelected(e, name, description){
+  saveSelected(e, name, description, privateStatus){
     e.preventDefault()
 
     let entity = this.state.entities[this.state.selected]
 
     entity.name = name
     entity.description = description
+    entity.private = privateStatus
 
     if (this.state.mode === 'edit'){
-      this.updateEntity(entity.id, {name, description})
+      this.updateEntity(entity.id, {name, description, private: privateStatus})
     }
     else if (this.state.mode === 'create point' && this.state.mode === 'create route'){
       this.uploadEntity(entity)
