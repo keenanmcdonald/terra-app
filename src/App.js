@@ -24,6 +24,7 @@ class App extends React.Component{
       mode: '', //edit, select, create point, create route,
       user: undefined,
       message: {text: '', hidden: true, timeoutId: undefined},
+      hidePanel: true,
     }
 
     this.loadEntities = this.loadEntities.bind(this)
@@ -215,8 +216,6 @@ class App extends React.Component{
         },
         body: JSON.stringify(data)
       })
-        .then(res => {
-        })
   }
 
 
@@ -362,7 +361,7 @@ class App extends React.Component{
 
   //loads user to the state, and calls loadEntities
   login(user){
-    this.setState({user})
+    this.setState({user, hidePanel: false})
     this.loadEntities()
   }
 
@@ -375,6 +374,7 @@ class App extends React.Component{
       mode: '',
       user: undefined,
       message: {text: '', hidden: true, timeoutId: undefined},
+      hidePanel: true,
     })
     //remove authToken from local storage and cookies
     window.localStorage.removeItem(config.TOKEN_KEY)
@@ -407,8 +407,8 @@ class App extends React.Component{
         <TerraContext.Provider value={contextValue}>
         <Header />
           <main>
-              <Map displaySearchButton={this.state.displaySearchButton} flyTo={this.state.flyToSelected}/>
-              <SidePanel/>
+              <Map hidePanel={this.state.hidePanel} displaySearchButton={this.state.displaySearchButton} flyTo={this.state.flyToSelected}/>
+              <SidePanel hidden={this.state.hidePanel}/>
           </main>
         </TerraContext.Provider>
       </div>

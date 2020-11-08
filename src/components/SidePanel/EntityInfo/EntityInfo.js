@@ -1,6 +1,6 @@
 import React from 'react'
 import TerraContext from '../../../TerraContext'
-import ElevationProfile from '../../Map/Display/ElevationProfile/ElevationProfile'
+import ElevationProfile from './ElevationProfile/ElevationProfile'
 import {Math as CesiumMath} from 'cesium'
 
 
@@ -55,10 +55,7 @@ class EntityInfo extends React.Component{
                     {this.props.position && this.props.position.height ? (
                         <div className='elevation info-box'> 
                             <h6>Elevation:</h6>
-                            {this.props.type === 'waypoint' ? (
-                                <p>{this.numberWithCommas(Math.round(this.props.position.height * 3.28084))}ft</p>
-                            ) 
-                            : <ElevationProfile position={this.props.position}/>}
+                            <p>{this.numberWithCommas(Math.round(this.props.position.height * 3.28084))}ft</p>
                         </div>
                     ) : ''}
                     {this.props.type === 'waypoint' ? (

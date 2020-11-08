@@ -3,22 +3,16 @@ import { Globe, Viewer, Entity, ScreenSpaceEventHandler, ScreenSpaceEvent } from
 import { 
             PolylineOutlineMaterialProperty,
             PolylineGraphics,
-            //PolylinePipeline,
             Color,
             Ion, 
             Cartesian3, 
             createWorldTerrain, 
             ScreenSpaceEventType, 
-            //sampleTerrain,
             sampleTerrainMostDetailed, 
             Cartographic,
-            Rectangle,
-            HeadingPitchRange,
-            Math as CesiumMath
         } from 'cesium'
 import TerraContext from '../../TerraContext'
 import Toolbar from './Toolbar/Toolbar'
-import Display from './Display/Display'
 import {Route} from 'react-router-dom'
 import LoginForm from './Pages/LoginForm/LoginForm'
 import SignupForm from './Pages/SignupForm/SignupForm'
@@ -257,7 +251,7 @@ class Map extends React.Component {
         }
 
         return (
-            <div className='map-container'>
+            <div className={`map-container ${this.props.hidePanel ? 'no-panel' : ''}`}>
                 <ErrorBoundary>
                     <Viewer 
                         ref={e => {

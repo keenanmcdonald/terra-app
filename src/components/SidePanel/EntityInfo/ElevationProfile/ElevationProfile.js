@@ -5,15 +5,6 @@ import TerraContext from '../../../../TerraContext'
 class ElevationProfile extends React.Component{
     static contextType = TerraContext
 
-
-    constructor(props){
-        super(props)
-
-        this.state = {
-            data: []
-        }
-    }
-
     componentDidMount(){
         this.parseData(this.props.positions)
     }
@@ -31,18 +22,20 @@ class ElevationProfile extends React.Component{
         }
         minHeight = Math.floor(minHeight*.01)*100
         maxHeight = Math.ceil(maxHeight*.01)*100
-        this.setState({data, minHeight, maxHeight})
+        return {data, minHeight, maxHeight}
     }
 
     render(){
+        const {data, minHeight, maxHeight} = this.parseData()
+
         return (
             <div className='elevation-profile-container'>
-                {this.state.data.length ? (
+                {data.length ? (
                 <ResponsiveContainer width="95%" height={150}>
                     <ScatterChart  margin={{top: 20,left: -20}}>
-                        <Scatter name="elevation" data={this.state.data} fill="#FFFFFF" line={true}/>
-                        <XAxis tick={{fontSize: 8}} dataKey='distance' type='number' allowDecimals={false} unit='mi' name='distance' domain={[0, Math.ceil(this.state.data[this.state.data.length-1].distance)]} stroke="#FFFFFF"/>
-                        <YAxis tick={{fontSize: 8}} dataKey='elevation' type='number' name='elevation' unit='ft' domain={[this.state.minHeight, this.state.maxHeight]} stroke="#FFFFFF"/>
+                        <Scatter name="elevation" data={data} fill="#FFFFFF" line={true}/>
+                        <XAxis tick={{fontSize: 8}} dataKey='distance' type='number' allowDecimals={false} unit='mi' name='distance' domain={[0, Math.ceil(data[data.length-1].distance)]} stroke="#FFFFFF"/>
+                        <YAxis tick={{fontSize: 8}} dataKey='elevation' type='number' name='elevation' unit='ft' domain={[minHeight, maxHeight]} stroke="#FFFFFF"/>
                     </ScatterChart>
                  </ResponsiveContainer>
                 ): ''}

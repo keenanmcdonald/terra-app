@@ -144,7 +144,7 @@ div.side-panel{
     max-height: Calc(100vh - 50px);
     width: 30vw;
     background-color: rgb(20,20,20);
-    z-index: 1000;
+    z-index: 100;
     margin: 0;
     transition: 0.5s;
     color: white;
@@ -153,7 +153,7 @@ div.side-panel{
     flex-direction: column;
 }
 
-div.side-panel.collapsed{
+div.side-panel.hidden{
     width: 0;
 }
 
@@ -198,7 +198,7 @@ div.side-panel button{
 /*Pages*/
 .page-backdrop{
     position: absolute;
-    top: 54px;
+    top: 50px;
     left: 0;
     height: 100%;
     width: 100%;
@@ -229,7 +229,6 @@ div.side-panel button{
 
 /*LandingPage*/
 .landing-page{
-    width: 70vw;
     position: fixed;
 }
 .landing-page span{
@@ -329,16 +328,16 @@ label.stay-signed-in{
 }
 
 /*Map*/
+
 .cesium-widget{
     height: 100vh;
     width: 70vw;
     transition-duration: 0.5s;
 }
 
-.cesium-widget.no-panel{
+.map-container.no-panel .cesium-widget{
     width: 100vw;
 }
-
 
 /*Message*/
 .message-container{
@@ -385,8 +384,14 @@ label.stay-signed-in{
     border-radius: 4px !important;
     background-color: transparent !important;
 }
+
+
 .cesium-viewer-geocoderContainer{
     margin-right: 30vw;
+}
+
+.map-container.no-panel .cesium-viewer-geocoderContainer{
+    margin-right: 2px;
 }
 
 /* Tooltip container */
@@ -435,4 +440,20 @@ label.stay-signed-in{
         font-size: 10px;
         top: 38px;
     }
+
+    div.side-panel{
+        width: 100%;
+        height: 40%;
+        bottom: 0px;
+        top: auto;
+        border-top: 1px solid rgba(255, 255, 255, 0.6);
+    }
+    .cesium-widget{
+        width: 100%;
+        height: 60vh - 50px;
+    }
+    .cesium-viewer-geocoderContainer{
+        margin-right: 2px;
+    }
+    
 }

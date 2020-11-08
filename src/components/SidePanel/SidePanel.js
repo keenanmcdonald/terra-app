@@ -19,7 +19,7 @@ class SidePanel extends React.Component {
         }
 
         return (
-            <div className='side-panel'>
+            <div className={`side-panel ${this.props.hidden ? 'hidden' : ''}`}>
                 <EntityList entities={this.context.entities} selected={this.context.selected} selectEntity={(id, flyTo) => this.context.methods.selectEntity(id, flyTo)}/>
                 {content}
             </div>
