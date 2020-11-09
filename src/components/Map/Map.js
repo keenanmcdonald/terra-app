@@ -56,7 +56,7 @@ class Map extends React.Component {
             entity.isSelected = isSelected
             let outlineColor = isSelected ? Color.WHITE : Color.GREY
 
-            let color = Color.CORNFLOWERBLUE
+            let color = Color.fromBytes(255, 174, 75)
             
             if (!entity.saved) {
                 color = new Color.fromBytes(100, 149, 255, 100) //new Color.fromBytes(116, 192, 67, 100)
@@ -65,6 +65,7 @@ class Map extends React.Component {
             else if (this.context.user && (this.context.user.user_name === entity.user_name)) {
                 color = new Color.fromBytes(100, 149, 255, 255) //new Color.fromBytes(116, 192, 67, 255)
             }
+
             entity.color = color
             entity.outlineColor = outlineColor
 
