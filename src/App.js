@@ -292,6 +292,8 @@ class App extends React.Component{
 
     let entity = this.state.entities[this.state.selected]
 
+    console.log(entity)
+
     entity.name = name
     entity.description = description
     entity.private = privateStatus
@@ -299,7 +301,8 @@ class App extends React.Component{
     if (this.state.mode === 'edit'){
       this.updateEntity(entity.id, {name, description, private: privateStatus})
     }
-    else if (this.state.mode === 'create point' && this.state.mode === 'create route'){
+    else if (this.state.mode === 'create point' || this.state.mode === 'create route'){
+      console.log('upload entity')
       this.uploadEntity(entity)
     }
 
