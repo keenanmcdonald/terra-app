@@ -1,5 +1,4 @@
 export default {
-    //API_ENDPOINT: 'https://terra-server1.herokuapp.com/',
-    API_ENDPOINT: process.env.REACT_APP_SERVER_URL || 'http://localhost:8000/',
+    API_ENDPOINT: process.env.REACT_APP_SERVER_URL || 'https://terra-server1.herokuapp.com/',
     TOKEN_KEY: 'token-key',
 } 
