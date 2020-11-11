@@ -75,6 +75,7 @@ class LoginForm extends React.Component{
                 this.props.history.push('/')
             })
             .catch(res => {
+                this.setState({loading: false})
                 this.setState({error: 'something went wrong, check that username and password is correct and please try again'})
             })
     }

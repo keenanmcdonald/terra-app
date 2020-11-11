@@ -45,6 +45,8 @@ class App extends React.Component{
   }
 
   componentDidMount(){
+    console.log(config.API_ENDPOINT)
+    console.log(process.env.REACT_APP_SERVER_URL)
     //load landing page for new users
     const previousVisit = (this.getCookieByName('previousVisit') === 'true')
     if (!previousVisit){
