@@ -26,7 +26,7 @@ const terrainProvider = createWorldTerrain();
 
 class Map extends React.Component {
     static contextType = TerraContext
-
+ 
     constructor(props){
         super(props)
 

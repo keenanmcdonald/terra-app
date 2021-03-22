@@ -3,8 +3,8 @@ import AccountNav from './AccountNav/AccountNav'
 import {withRouter} from 'react-router-dom'
 
 
-class Header extends React.Component{
-    onTitleClick(){
+function Header(){
+    function onTitleClick(){
         if (this.props.match.path === '/' && this.props.match.isExact){
             this.props.history.push('/welcome')
         }
@@ -13,19 +13,17 @@ class Header extends React.Component{
         }
     }
 
-    render(){
-        return (
-            <header>
-                <div onClick={() => this.onTitleClick()} className="header-title">
-                    <img className="logo" src={require('../../images/terra-logo.png')} alt="logo"/>
-                    <h1>Terra</h1>
-                </div>
-                <div className="account-nav-container">
-                    <AccountNav/>
-                </div>
-            </header>
-        )
-    }
+    return (
+        <header>
+            <div onClick={onTitleClick} className="header-title">
+                <img className="logo" src={require('../../images/terra-logo.png')} alt="logo"/>
+                <h1>Terra</h1>
+            </div>
+            <div className="account-nav-container">
+                <AccountNav/>
+            </div>
+        </header>
+    )
 }
 
 export default withRouter(Header)

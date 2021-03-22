@@ -65,11 +65,9 @@ class LoginForm extends React.Component{
         AuthApiService.postLogin(credentials)
             .then(res => {
                 this.setState({error: '', loading: false})
-                window.localStorage.setItem(config.TOKEN_KEY, res.authToken)
+                window.sessionStorage.setItem(config.TOKEN_KEY, res.authToken)
                 if(this.state.staySignedIn){
-                    let expiryDate = new Date()
-                    expiryDate.setMonth(expiryDate.getMonth() + 1)
-                    document.cookie = `authToken=${res.authToken}; expires=${expiryDate}`
+                    window.localStorage.setItem(config.TOKEN_KEY, res.authToken)
                 }
                 this.context.methods.login(res.user)
                 this.props.history.push('/')

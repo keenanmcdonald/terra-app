@@ -6,12 +6,11 @@ import TerraContext from './TerraContext'
 import './App.css'
 import config from './config'
 import {Cartographic} from 'cesium'
-import {withRouter} from 'react-router-dom'
+import {withRouter, Route, Switch} from 'react-router-dom'
 import * as turf from '@turf/turf'
 import {Math as CesiumMath} from 'cesium'
 import SidePanel from './components/SidePanel/SidePanel'
-
-
+import AuthApiService from './services/auth-api-service'
 class App extends React.Component{
   constructor(props){
     super(props)
@@ -44,52 +43,26 @@ class App extends React.Component{
     this.cancelFlyTo = this.cancelFlyTo.bind(this)
   }
 
-  componentDidMount(){
-    //load landing page for new users
-    const previousVisit = (this.getCookieByName('previousVisit') === 'true')
-    if (!previousVisit){
-      this.props.history.push('/welcome')
-    }
-    let expiryDate = new Date()
-    expiryDate.setMonth(expiryDate.getMonth() + 6)
-    document.cookie = `previousVisit=true; expires=${expiryDate}`
+  componentDidMount(){ 
+    this.checkForToken()
+  }
 
-
-    //keep me logged in logic
-    const authToken = this.getCookieByName('authToken')
+  async checkForToken(){
+    let authToken = window.localStorage.getItem(config.TOKEN_KEY) || window.sessionStorage.getItem('terra_token')
     if (authToken){
-      fetch(`${config.API_ENDPOINT}auth/verify_token`,  {       
-        method: 'POST',
-        headers: {
-            'content-type': 'application/json',  
-        },
-        body: JSON.stringify({authToken: authToken}),
-      })
-        .then(res => {
-          if (!res.ok){
-            throw new Error(res.error)
-          }
-          res.json()
-            .then(user => {
-              this.login(user)
-            })
-        })
-        .catch(error => {
-          console.log(error)
-        })
+      const user = await AuthApiService.loginWithToken(authToken)
+      this.login(user)
+    }
+    else{
+      this.props.history.push('/welcome')
     }
   }
 
-  getCookieByName(name) 
-  {
-    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
-    if (match) {
-      return match[2]
-    }
-    else{
-      return undefined
-    }
- }
+  //loads user to the state, and calls loadEntities
+  login(user){
+    this.setState({user, hidePanel: false})
+    this.loadEntities()
+  }  
 
   parseEntityData(entities){
     //convert position data from server to Cartesian3 objects
@@ -363,11 +336,6 @@ class App extends React.Component{
     }
   }
 
-  //loads user to the state, and calls loadEntities
-  login(user){
-    this.setState({user, hidePanel: false})
-    this.loadEntities()
-  }
 
   //logs the current user out, resets the state. 
   logout(){
@@ -410,10 +378,20 @@ class App extends React.Component{
       <div className="App">
         <TerraContext.Provider value={contextValue}>
         <Header />
-          <main>
+        <Switch>
+          <Route path='/entity/:id'>
+            <main>
               <Map hidePanel={this.state.hidePanel} displaySearchButton={this.state.displaySearchButton} flyTo={this.state.flyToSelected}/>
               <SidePanel hidden={this.state.hidePanel}/>
-          </main>
+            </main>
+          </Route>
+          <Route path='/'>
+            <main>
+              <Map hidePanel={this.state.hidePanel} displaySearchButton={this.state.displaySearchButton} flyTo={this.state.flyToSelected}/>
+              <SidePanel hidden={this.state.hidePanel}/>
+            </main>
+          </Route>
+        </Switch>
         </TerraContext.Provider>
       </div>
     )
