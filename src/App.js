@@ -5,12 +5,14 @@ import { hot } from 'react-hot-loader/root'
 import TerraContext from './TerraContext'
 import './App.css'
 import config from './config'
-import {Cartographic} from 'cesium'
+import {Cartographic, Math as CesiumMath} from 'cesium'
 import {withRouter, Route, Switch} from 'react-router-dom'
 import * as turf from '@turf/turf'
-import {Math as CesiumMath} from 'cesium'
 import SidePanel from './components/SidePanel/SidePanel'
 import AuthApiService from './services/auth-api-service'
+import { ReactQueryDevtools } from 'react-query/devtools'
+import {QueryClient, QueryClientProvider} from 'react-query'
+
 class App extends React.Component{
   constructor(props){
     super(props)
@@ -24,6 +26,7 @@ class App extends React.Component{
       user: undefined,
       message: {text: '', hidden: true, timeoutId: undefined},
       hidePanel: true,
+      queryClient: new QueryClient()
     }
 
     this.loadEntities = this.loadEntities.bind(this)
@@ -51,7 +54,9 @@ class App extends React.Component{
     let authToken = window.localStorage.getItem(config.TOKEN_KEY) || window.sessionStorage.getItem('terra_token')
     if (authToken){
       const user = await AuthApiService.loginWithToken(authToken)
-      this.login(user)
+      if (user){
+        this.login(user)
+      }
     }
     else{
       this.props.history.push('/welcome')
@@ -376,23 +381,26 @@ class App extends React.Component{
     }
     return (
       <div className="App">
-        <TerraContext.Provider value={contextValue}>
-        <Header />
-        <Switch>
-          <Route path='/entity/:id'>
-            <main>
-              <Map hidePanel={this.state.hidePanel} displaySearchButton={this.state.displaySearchButton} flyTo={this.state.flyToSelected}/>
-              <SidePanel hidden={this.state.hidePanel}/>
-            </main>
-          </Route>
-          <Route path='/'>
-            <main>
-              <Map hidePanel={this.state.hidePanel} displaySearchButton={this.state.displaySearchButton} flyTo={this.state.flyToSelected}/>
-              <SidePanel hidden={this.state.hidePanel}/>
-            </main>
-          </Route>
-        </Switch>
-        </TerraContext.Provider>
+        <QueryClientProvider client={this.state.queryClient}>
+          <TerraContext.Provider value={contextValue}>
+          <Header />
+          <Switch>
+            <Route path='/entity/:id'>
+              <main>
+                <Map hidePanel={this.state.hidePanel} displaySearchButton={this.state.displaySearchButton} flyTo={this.state.flyToSelected}/>
+                <SidePanel hidden={this.state.hidePanel}/>
+              </main>
+            </Route>
+            <Route path='/'>
+              <main>
+                <Map hidePanel={this.state.hidePanel} displaySearchButton={this.state.displaySearchButton} flyTo={this.state.flyToSelected}/>
+                <SidePanel hidden={this.state.hidePanel}/>
+              </main>
+            </Route>
+          </Switch>
+          </TerraContext.Provider>
+          <ReactQueryDevtools initialIsOpen/>
+        </QueryClientProvider>
       </div>
     )
   }
